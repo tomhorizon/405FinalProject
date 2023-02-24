@@ -262,7 +262,7 @@ if __name__ == "__main__":
             #else:
             camera.ascii_art(image.v_ir)
             print(camera.target_alg())
-            time.sleep_ms(5000)
+            time.sleep_ms(1000)
             
         except KeyboardInterrupt:
             break
