@@ -1,0 +1,52 @@
+Pitch Motor
+Pin 1		PB4
+Pin 2		PB5
+Ena		PA10
+Timer		3
+Channel 1	1
+Channel 2	2
+
+Pitch Encoder
+Pin 1		PB6
+Pin 2		PB7
+Timer		4
+Channel 1	1
+Channel 2	2
+
+
+Yaw Motor
+Pin 1		PA0
+Pin 2		PA1
+Ena		PC1
+Timer		5
+Channel 1	1
+Channel 2	2
+
+Yaw Encoder
+Pin 1		PC6
+Pin 2		PC7
+Timer		8
+Channel 1	1
+Channel 2	2
+
+
+Flywheel 1  Pins and Channels not verified!!
+Pin 1		PA6
+Pin 2		PA7
+Ena		------
+Timer		3
+Channel 1	1    
+Channel 2	2
+
+Flywheel 2  Pins and Channels not verified!!
+Pin 1		PB0
+Pin 2		PB1
+Ena		------
+Timer		3
+Channel 1	3
+Channel 2	4
+
+
+Servo Channel
+PWM Pin	XXX
+
