@@ -48,5 +48,5 @@ Channel 2	4
 
 
 Servo Channel
-PWM Pin	XXX
+PWM Pin	XXX   <-- time on, not duty cycle %
 
