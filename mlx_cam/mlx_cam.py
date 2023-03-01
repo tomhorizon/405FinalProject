@@ -22,9 +22,19 @@ import array
 import utime as time
 from machine import Pin, I2C
 from mlx90640 import MLX90640
+from mlx90640 import RefreshRate
 from mlx90640.calibration import NUM_ROWS, NUM_COLS, IMAGE_SIZE, TEMP_K
 from mlx90640.image import ChessPattern, InterleavedPattern
 
+from mlx90640.regmap import (
+    REGISTER_MAP,
+    EEPROM_MAP,
+    RegisterMap,
+    CameraInterface,
+    REG_SIZE,
+    EEPROM_ADDRESS,
+    EEPROM_SIZE,
+)
 
 class MLX_Cam:
     """!
@@ -236,9 +246,20 @@ if __name__ == "__main__":
     i2c_address = 0x33
     scanhex = [f"0x{addr:X}" for addr in i2c_bus.scan()]
     print(f"I2C Scan: {scanhex}")
+    
+    #byte_data = bytearray([(0b111 << 7) & 0x80 | (0x800D >> 8 & 0x7F), 0x800D & 0xFF, 0b111])
+   
+    # Refresh rate = 0b111 for 64Hz
+    # Address 0x800D
+    #
+    #i2c_bus.writeto(i2c_address, byte_data)
+    
 
     # Create the camera object and set it up in default mode
     camera = MLX_Cam(i2c_bus)
+    #MLX90640.refresh_rate.setter(0b111)
+    #print(RefreshRate.get_freq(REGISTER_MAP[0x800D]['refresh_rate']))
+    #print(str(REGISTER_MAP[0x800D][4]))
 
     while True:
         try:

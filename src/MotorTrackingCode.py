@@ -43,6 +43,13 @@ from control import Control
 import cotask
 import task_share
 
+from machine import Pin, I2C
+from mlx90640 import MLX90640
+from mlx90640 import RefreshRate
+from mlx90640.calibration import NUM_ROWS, NUM_COLS, IMAGE_SIZE, TEMP_K
+from mlx90640.image import ChessPattern, InterleavedPattern
+import MLX_Cam
+
 
 KP1 = 0.2 # yaw
 KP2 = 0.2 # pitch
@@ -112,10 +119,56 @@ def motor2task(shares): #pitch motor
 def cameraTask(shares):
     #initialize camera
     YawError, PitchError = shares
+    # The following import is only used to check if we have an STM32 board such
+    # as a Pyboard or Nucleo; if not, use a different library
+    try:
+        from pyb import info
+
+    # Oops, it's not an STM32; assume generic machine.I2C for ESP32 and others
+    except ImportError:
+        # For ESP32 38-pin cheapo board from NodeMCU, KeeYees, etc.
+        i2c_bus = I2C(1, scl=Pin(22), sda=Pin(21))
+
+    # OK, we do have an STM32, so just use the default pin assignments for I2C1
+    else:
+        i2c_bus = I2C(1)
+
+    # Select MLX90640 camera I2C address, normally 0x33, and check the bus
+    i2c_address = 0x33
+    scanhex = [f"0x{addr:X}" for addr in i2c_bus.scan()]
+    print(f"I2C Scan: {scanhex}")
+    
+    camera = MLX_Cam(i2c_bus)
     
     while True:
         # take image
         # x, y = calculate yaw, pitch error in pixels
+        try:
+            # Get and image and see how long it takes to grab that image
+            print("Click.", end='')
+            begintime = time.ticks_ms()
+            image = camera.get_image()
+            print(f" {time.ticks_diff(time.ticks_ms(), begintime)} ms")
+
+            # Can show image.v_ir, image.alpha, or image.buf; image.v_ir best?
+            # Display pixellated grayscale or numbers in CSV format; the CSV
+            # could also be written to a file. Spreadsheets, Matlab(tm), or
+            # CPython can read CSV and make a decent false-color heat plot.
+            show_image = False
+            show_csv = False
+            if show_image:
+                camera.ascii_image(image.v_ir)
+            elif show_csv:
+                for line in camera.get_csv(image.v_ir, limits=(0, 99)):
+                    print(line)
+            #else:
+            camera.ascii_art(image.v_ir)
+            x,y = camera.target_alg()
+            print(camera.target_alg())
+            time.sleep_ms(1000)
+            
+        except KeyboardInterrupt:
+            break
         YawError.put(x)
         PitchError.put(y)
         yield 0
