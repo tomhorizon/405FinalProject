@@ -39,10 +39,8 @@ encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, e
 
 
 def main():
-    KP1 = .1
-    setPoint1 = 5000
-    
-    
+    KP1 = .01
+    setPoint1 = 200
     control1 = Control(KP1, setPoint1)
     
     print(f'{setPoint1}, {KP1}')
@@ -51,24 +49,19 @@ def main():
 
     elapsed = 0
     startTime = utime.ticks_ms()
+
+
     while 1:
         currentTime = utime.ticks_ms()
         elapsed = currentTime - startTime
-
         pos1 = encoder1.read()
-        print(pos1)
         psi = control1.run(pos1)
         motor1.set_duty_cycle(psi)
-        #print(psi)
         pyb.delay(10)
     
 
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
 
-    
-
-    
 while True: 
     main()
-    pyb.delay(10000)
