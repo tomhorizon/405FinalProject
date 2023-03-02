@@ -48,7 +48,7 @@ from mlx90640 import MLX90640
 from mlx90640 import RefreshRate
 from mlx90640.calibration import NUM_ROWS, NUM_COLS, IMAGE_SIZE, TEMP_K
 from mlx90640.image import ChessPattern, InterleavedPattern
-import MLX_Cam
+from mlx_cam import MLX_Cam
 
 
 KP1 = 0.2 # yaw
@@ -116,7 +116,7 @@ def motor2task(shares): #pitch motor
         motor2.set_duty_cycle(psi)
         yield 0
         
-def cameraTask(shares):
+def cameratask(shares):
     #initialize camera
     YawError, PitchError = shares
     # The following import is only used to check if we have an STM32 board such
@@ -165,7 +165,6 @@ def cameraTask(shares):
             camera.ascii_art(image.v_ir)
             x,y = camera.target_alg()
             print(camera.target_alg())
-            time.sleep_ms(1000)
             
         except KeyboardInterrupt:
             break
@@ -194,7 +193,7 @@ def main():
 
     cotask.task_list.append (task_1)
     cotask.task_list.append (task_2)
-    costast.task_list.append (task_3)
+    cotask.task_list.append (task_3)
     
     KP1share.put(KP1)
     SP1share.put(0)
