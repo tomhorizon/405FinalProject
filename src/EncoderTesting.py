@@ -1,5 +1,6 @@
 import pyb
 import utime
+import gc
 from motor_driver import MotorDriver
 from encoder_reader import EncoderReader
 from control import Control
@@ -112,7 +113,12 @@ def loop():
     i2c_address = 0x33
     scanhex = [f"0x{addr:X}" for addr in i2c_bus.scan()]
     print(f"I2C Scan: {scanhex}")
+    print(gc.mem_free())
+    gc.collect()
+    print(gc.mem_free())
     camera = MLX_Cam(i2c_bus)
+    gc.collect()
+    print(gc.mem_free())
     
     KP1 = .1
     
