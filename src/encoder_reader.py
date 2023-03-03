@@ -46,13 +46,17 @@ class EncoderReader:
 
 
 if __name__ == '__main__':
+    encoder1Tim = 4
+    encoder1Ch1 = 1
+    encoder1Ch2 = 2
     p1 = pyb.Pin.board.PB6
     p2 = pyb.Pin.board.PB7
-    enc = EncoderReader(p1, p2, 0, 0)
+    enc = EncoderReader(p1, p2, encoder1Tim, encoder1Ch1, encoder1Ch2)
+    enc.zero()
     while True:
         pos = enc.read()
-        #print(pos)
-        if enc.timer.counter() > 40000:
-            #print('reset')
-            enc.zero()
+        print(pos)
+#         if enc.timer.counter() > 40000:
+#             #print('reset')
+#             enc.zero()
         pyb.delay(100)

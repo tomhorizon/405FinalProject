@@ -195,16 +195,20 @@ class MLX_Cam:
         return image
     
     def target_alg(self):
+        threshhold = 2
 #         x_sum = array.array('i', self._width*[0])
         sum_old = 0
-        for col in range(self._width):
+        avg_old = 0
+        for col in range(self._width-1):
             sum = 0
             for row in range(self._height):
-                val = self.pix_map[row][col]
-                sum = sum + val
-            if sum > sum_old:
-                sum_old = sum
-                x_target = col
+                val = self.pix_map[row][col+1]
+                if val > threshhold:
+                    sum = sum + val*val
+            avg = int(sum/32)
+            if avg > avg_old:
+                avg_old = avg
+                x_target = col+1
         max_y = 0
         for row in range(self._height):
             if self.pix_map[row][x_target] > max_y:
@@ -273,7 +277,7 @@ if __name__ == "__main__":
             # Display pixellated grayscale or numbers in CSV format; the CSV
             # could also be written to a file. Spreadsheets, Matlab(tm), or
             # CPython can read CSV and make a decent false-color heat plot.
-            show_image = False
+            show_image = True
             show_csv = False
             if show_image:
                 camera.ascii_image(image.v_ir)

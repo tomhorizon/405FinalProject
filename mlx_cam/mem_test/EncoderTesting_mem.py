@@ -10,6 +10,7 @@ from machine import Pin, I2C
 #Imports for MLX_Cam stuff
 # import gc
 import array
+import uarray
 #import utime as time
 from machine import Pin, I2C
 from mlx90640 import MLX90640
@@ -17,6 +18,7 @@ from mlx90640 import MLX90640
 from mlx90640.calibration import NUM_ROWS, NUM_COLS, IMAGE_SIZE, TEMP_K
 from mlx90640.image import ChessPattern, InterleavedPattern
 
+gc.enable()
 # motor constants
 motor1Pin1 = pyb.Pin.board.PB4
 motor1Pin2 = pyb.Pin.board.PB5
@@ -91,52 +93,6 @@ class MLX_Cam:
         self._image = self._camera.image
 
 
-#     def ascii_image(self, array, pixel="██", textcolor="0;180;0"):
-#         """!
-#         @brief   Show low-resolution camera data as shaded pixels on a text
-#                  screen.
-#         @details The data is printed as a set of characters in columns for the
-#                  number of rows in the camera's image size. This function is
-#                  intended for testing an MLX90640 thermal infrared sensor.
-# 
-#                  A pair of extended ACSII filled rectangles is used by default
-#                  to show each pixel so that the aspect ratio of the display on
-#                  screens isn't too smushed. Each pixel is colored using ANSI
-#                  terminal escape codes which work in only some programs such as
-#                  PuTTY.  If shown in simpler terminal programs such as the one
-#                  used in Thonny, the display just shows a bunch of pixel
-#                  symbols with no difference in shading (boring).
-# 
-#                  A simple auto-brightness scaling is done, setting the lowest
-#                  brightness of a filled block to 0 and the highest to 255. If
-#                  there are bad pixels, this can reduce contrast in the rest of
-#                  the image.
-# 
-#                  After the printing is done, character color is reset to a
-#                  default of medium-brightness green, or something else if
-#                  chosen.
-#         @param   array An array of (self._width * self._height) pixel values
-#         @param   pixel Text which is shown for each pixel, default being a pair
-#                  of extended-ASCII blocks (code 219)
-#         @param   textcolor The color to which printed text is reset when the
-#                  image has been finished, as a string "<r>;<g>;<b>" with each
-#                  letter representing the intensity of red, green, and blue from
-#                  0 to 255
-#         """
-#         minny = min(array)
-#         scale = 255.0 / (max(array) - minny)
-#         for row in range(self._height):
-#             for col in range(self._width):
-#                 pix = int((array[row * self._width + (self._width - col - 1)]
-#                            - minny) * scale)
-#                 print(f"\033[38;2;{pix};{pix};{pix}m{pixel}", end='')
-#             print(f"\033[38;2;{textcolor}m")
-
-
-    ## A "standard" set of characters of different densities to make ASCII art
-#     asc = " -.:=+*#%@"
-
-
     def ascii_art(self, array):
         """!
         @brief   Show a data array from the IR image as ASCII art.
@@ -148,6 +104,7 @@ class MLX_Cam:
         asc = " -.:=+*#%@"
         scale = 10 / (max(array) - min(array))
         offset = -min(array)
+#         self.pix_map = uarray.create_2d(24, 32, dtype = numpy.uint8)
         self.pix_map = [[0 for j in range(self._width)] for i in range(self._height)]
         for row in range(self._height):
             line = ""
@@ -166,33 +123,7 @@ class MLX_Cam:
         return
 
 
-#     def get_csv(self, array, limits=None):
-#         """!
-#         @brief   Generate a string containing image data in CSV format.
-#         @details This function generates a set of lines, each having one row of
-#                  image data in Comma Separated Variable format. The lines can
-#                  be printed or saved to a file using a @c for loop.
-#         @param   array The array of data to be presented
-#         @param   limits A 2-iterable containing the maximum and minimum values
-#                  to which the data should be scaled, or @c None for no scaling
-#         """
-#         if limits and len(limits) == 2:
-#             scale = (limits[1] - limits[0]) / (max(array) - min(array))
-#             offset = limits[0] - min(array)
-#         else:
-#             offset = 0.0
-#             scale = 1.0
-#         for row in range(self._height):
-#             line = ""
-#             for col in range(self._width):
-#                 pix = int((array[row * self._width + (self._width - col - 1)]
-#                           * scale) + offset)
-#                 if col:
-#                     line += ","
-#                 line += f"{pix}"
-# #             line += "\r\n"
-#             yield line
-#         return
+
 
 
     def get_image(self):
@@ -217,16 +148,23 @@ class MLX_Cam:
     def target_alg(self):
 #         x_sum = array.array('i', self._width*[0])
         sum_old = 0
-        for col in range(self._width):
+#         avg_old = 0
+        for col in range(31):
             sum = 0
-            for row in range(self._height):
-                val = self.pix_map[row][col]
-                sum = sum + val
+            for row in range(24):
+                val = self.pix_map[row][col+1]
+#                 if val > 2:
+#                     sum = sum + val*val
+                sum += val
+#             avg = int(sum/32)
+#             if avg > avg_old:
+#                 avg_old = avg
+#                 x_target = col+1
             if sum > sum_old:
                 sum_old = sum
-                x_target = col
+                x_target = col+1
         max_y = 0
-        for row in range(self._height):
+        for row in range(24):
             if self.pix_map[row][x_target] > max_y:
                 max_y = self.pix_map[row][x_target]
                 y_target = row
@@ -236,64 +174,9 @@ class MLX_Cam:
         # Error is computed with relation to the center of the image.
         # A positive error_x --> blaster is aimed too far to the right
         # A positive error_y --> blaster is aimed too high
-        error_x = x_center - x_target
-        error_y = y_target - y_center
-        return error_x, error_y
-
-
-# def main():
-#     
-#     KP1 = .1
-#             
-#     setPoint1 = 5000
-#     
-#     control1 = Control(KP1, setPoint1 + 32768)
-#     
-#     print(f'{setPoint1}, {KP1}')
-#     encoder1.zero()
-#     elapsed = 0
-#     startTime = utime.ticks_ms()
-#     count = 0
-#     while elapsed <= 3000:
-#         currentTime = utime.ticks_ms()
-#         elapsed = currentTime - startTime
-# 
-#         pos1 = encoder1.read()
-#         print(pos1)
-#         psi = control1.run(pos1)
-#         motor1.set_duty_cycle(-psi)
-#         #print(psi)
-#         pyb.delay(10)
-#         count += 1
-#     
-#     print("done")
-#     motor1.set_duty_cycle(0)
-#     #motor2.set_duty_cycle(0)
-#     
-#     
-#     KP1 = .1
-#     setPoint1 = -5000
-#     
-#     control1 = Control(KP1, setPoint1 + 32768)
-#     print(f'{setPoint1}, {KP1}')
-#     encoder1.zero()
-#     elapsed = 0
-#     startTime = utime.ticks_ms()
-#     count = 0
-#     while elapsed <= 3000:
-#         currentTime = utime.ticks_ms()
-#         elapsed = currentTime - startTime
-# 
-#         pos1 = encoder1.read()
-#         print(pos1)
-#         psi = control1.run(pos1)
-#         motor1.set_duty_cycle(-psi)
-#         #print(psi)
-#         pyb.delay(10)
-#         count += 1
-#     
-#     print("done")
-#     motor1.set_duty_cycle(0)
+        #error_x = x_center - x_target
+        #error_y = y_target - y_center
+        return x_center-x_target, y_target-y_center
     
 def loop():
     try:
@@ -314,9 +197,9 @@ def loop():
     i2c_address = 0x33
     scanhex = [f"0x{addr:X}" for addr in i2c_bus.scan()]
 #     print(f"I2C Scan: {scanhex}")
-#     print(gc.mem_free())
+    print(gc.mem_free())
     gc.collect()
-#     print(gc.mem_free())
+    print(gc.mem_free())
     camera = MLX_Cam(i2c_bus)
     gc.collect()
     print(gc.mem_free())
@@ -329,7 +212,7 @@ def loop():
         image = camera.get_image()
         gc.collect()
         camera.ascii_art(image.v_ir)
-#         print(camera.target_alg())
+        print(camera.target_alg())
         
         Yaw_error, Pitch_error = camera.target_alg()
         
