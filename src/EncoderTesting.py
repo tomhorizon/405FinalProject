@@ -359,6 +359,8 @@ def loop():
             motor2.set_duty_cycle(-psi2)
             #print(psi)
             pyb.delay(5)
+            
+            print(psi1, psi2)
         
 #         print("done")
         motor1.set_duty_cycle(0)
