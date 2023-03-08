@@ -188,20 +188,20 @@ class MLX_Cam:
                  ChessPattern (default) mode as it probably should be.
         @returns A reference to the image object we've just filled with data
         """
-#         for subpage in (0, 1):
-#             while not self._camera.has_data:
-#                 time.sleep_ms(50)
-#                 print('.', end='')
-#             self._camera.read_image(subpage)
-#             state = self._camera.read_state()
-#             image = self._camera.process_image(subpage, state)
-        subpage = 0
-        while not self._camera.has_data:
-            time.sleep_ms(50)
-            print('.', end='')
-        self._camera.read_image(subpage)
-        state = self._camera.read_state()
-        image = self._camera.process_image(subpage, state)
+        for subpage in (0, 1):
+            while not self._camera.has_data:
+                time.sleep_ms(50)
+                print('.', end='')
+            self._camera.read_image(subpage)
+            state = self._camera.read_state()
+            image = self._camera.process_image(subpage, state)
+#         subpage = 0
+#         while not self._camera.has_data:
+#             time.sleep_ms(50)
+#             print('.', end='')
+#         self._camera.read_image(subpage)
+#         state = self._camera.read_state()
+#         image = self._camera.process_image(subpage, state)
 
         return image
     
@@ -224,11 +224,11 @@ class MLX_Cam:
         sum_y = 0
         count = 0
         for row in range(self._height):
-#             if self.pix_map[row][x_target] > max_y:
-#                 max_y = self.pix_map[row][x_target]
-#                 y_target = row
-            if self.pix_map[row][x_target] > 6:
-#                 max_y = self.pix_map[row][x_target]
+            sum_y += self.pix_map[row][x_target]
+        avg_row = sum_y/self._height
+        sum_y = 0
+        for row in range(self._height):
+            if self.pix_map[row][x_target] > avg_row:
                 sum_y += row
                 count += 1
         print(f"Count: {count}")
@@ -236,6 +236,8 @@ class MLX_Cam:
         x_center = self._width/2
         y_center = self._height/2
         
+        print(f"center: ({x_center},{y_center})")
+        print(f"target: ({x_target},{y_target})")
         # Error is computed with relation to the center of the image.
         # A positive error_x --> blaster is aimed too far to the right
         # A positive error_y --> blaster is aimed too high
@@ -302,7 +304,7 @@ if __name__ == "__main__":
             # Display pixellated grayscale or numbers in CSV format; the CSV
             # could also be written to a file. Spreadsheets, Matlab(tm), or
             # CPython can read CSV and make a decent false-color heat plot.
-            show_image = False
+            show_image = True
             show_csv = False
             if show_image:
                 camera.ascii_image(image.v_ir)
