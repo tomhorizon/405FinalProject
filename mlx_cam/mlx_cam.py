@@ -112,6 +112,8 @@ class MLX_Cam:
             for col in range(self._width):
                 pix = int((array[row * self._width + (self._width - col - 1)]
                            - minny) * scale)
+#                 if pix <= 100:
+#                     pix = 0
                 print(f"\033[38;2;{pix};{pix};{pix}m{pixel}", end='')
             print(f"\033[38;2;{textcolor}m")
 
@@ -136,6 +138,8 @@ class MLX_Cam:
             for col in range(self._width):
                 pix = int((array[row * self._width + (self._width - col - 1)]
                            + offset) * scale)
+                if pix<=4:
+                    pix = 0
                 self.pix_map[row][col] = pix
                 try:
                     the_char = MLX_Cam.asc[pix]
@@ -191,6 +195,13 @@ class MLX_Cam:
             self._camera.read_image(subpage)
             state = self._camera.read_state()
             image = self._camera.process_image(subpage, state)
+#         subpage = 0
+#         while not self._camera.has_data:
+#             time.sleep_ms(50)
+#             print('.', end='')
+#         self._camera.read_image(subpage)
+#         state = self._camera.read_state()
+#         image = self._camera.process_image(subpage, state)
 
         return image
     
@@ -210,13 +221,23 @@ class MLX_Cam:
                 avg_old = avg
                 x_target = col+1
         max_y = 0
+        sum_y = 0
+        count = 0
         for row in range(self._height):
-            if self.pix_map[row][x_target] > max_y:
-                max_y = self.pix_map[row][x_target]
-                y_target = row
+            sum_y += self.pix_map[row][x_target]
+        avg_row = sum_y/self._height
+        sum_y = 0
+        for row in range(self._height):
+            if self.pix_map[row][x_target] > avg_row:
+                sum_y += row
+                count += 1
+        print(f"Count: {count}")
+        y_target = int(sum_y/count)
         x_center = self._width/2
         y_center = self._height/2
         
+        print(f"center: ({x_center},{y_center})")
+        print(f"target: ({x_target},{y_target})")
         # Error is computed with relation to the center of the image.
         # A positive error_x --> blaster is aimed too far to the right
         # A positive error_y --> blaster is aimed too high
@@ -261,6 +282,12 @@ if __name__ == "__main__":
 
     # Create the camera object and set it up in default mode
     camera = MLX_Cam(i2c_bus)
+    camera._camera.registers['refresh_rate'] = 0b111
+    camera._camera.registers['adc_resolution'] = 0b00
+    camera._camera.registers['subpage_enable'] = 0x1
+    camera._camera.registers['subpage_repeat'] = 0x0
+    camera._camera.registers['repeat_select'] = 0x0
+    camera._camera.registers['fmplus_enable'] = 0b0
     #MLX90640.refresh_rate.setter(0b111)
     #print(RefreshRate.get_freq(REGISTER_MAP[0x800D]['refresh_rate']))
     #print(str(REGISTER_MAP[0x800D][4]))
