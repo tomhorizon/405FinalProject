@@ -206,7 +206,7 @@ class MLX_Cam:
         return image
     
     def target_alg(self):
-        threshhold = 2
+        threshhold = 5
 #         x_sum = array.array('i', self._width*[0])
         sum_old = 0
         avg_old = 0
@@ -226,18 +226,19 @@ class MLX_Cam:
         for row in range(self._height):
             sum_y += self.pix_map[row][x_target]
         avg_row = sum_y/self._height
-        sum_y = 0
+        sum_y_ind = 0
+        sum_y_val = 0
         for row in range(self._height):
             if self.pix_map[row][x_target] > avg_row:
-                sum_y += row
-                count += 1
-        print(f"Count: {count}")
-        y_target = int(sum_y/count)
+                sum_y_ind += row
+                sum_y_val += self.pix_map[row][x_target]*row
+#         print(f"Count: {count}")
+        y_target = sum_y_val/sum_y_ind
         x_center = self._width/2
         y_center = self._height/2
         
-        print(f"center: ({x_center},{y_center})")
-        print(f"target: ({x_target},{y_target})")
+#         print(f"center: ({x_center},{y_center})")
+#         print(f"target: ({x_target},{y_target})")
         # Error is computed with relation to the center of the image.
         # A positive error_x --> blaster is aimed too far to the right
         # A positive error_y --> blaster is aimed too high
