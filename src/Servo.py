@@ -2,9 +2,9 @@ import pyb
 import utime
 
 
-servo_signal = pyb.Timer(4, freq=250)
-servo_pin = pyb.Pin(pyb.Pin.board.PB6, pyb.Pin.OUT_PP)
-signal_ch = servo_signal.channel(1, pyb.Timer.PWM, pin=servo_pin, pulse_width=8000)
+servo_signal = pyb.Timer(5, freq=250)
+servo_pin = pyb.Pin(pyb.Pin.board.PA3, pyb.Pin.OUT_PP)
+signal_ch = servo_signal.channel(4, pyb.Timer.PWM, pin=servo_pin, pulse_width=8000)
     
     
     
