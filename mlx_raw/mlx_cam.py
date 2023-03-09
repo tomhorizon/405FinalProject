@@ -185,6 +185,46 @@ class MLX_Cam:
             image = self._camera.read_image(subpage)
 
         return image
+    def target_alg(self, xrange, array):
+        threshhold = 5
+#         x_sum = array.array('i', self._width*[0])
+        sum_old = 0
+        avg_old = 0
+        for col in range(xrange[0], xrange[1] + 1):
+            sum = 0
+            for row in range(self._height):
+                val = array[row][col+1]
+                if val > threshhold:
+                    sum = sum + val*val
+            avg = int(sum/32)
+            if avg > avg_old:
+                avg_old = avg
+                x_target = col+1
+        max_y = 0
+        sum_y = 0
+        count = 0
+        for row in range(self._height):
+            sum_y += self.array[row][x_target]
+        avg_row = sum_y/self._height
+        sum_y_ind = 0
+        sum_y_val = 0
+        for row in range(self._height):
+            if self.array[row][x_target] > avg_row:
+                sum_y_ind += row
+                sum_y_val += self.array[row][x_target]*row
+#         print(f"Count: {count}")
+        y_target = sum_y_val/sum_y_ind
+        x_center = self._width/2
+        y_center = self._height/2
+        
+#         print(f"center: ({x_center},{y_center})")
+        print(f"target: ({x_target},{y_target})")
+        # Error is computed with relation to the center of the image.
+        # A positive error_x --> blaster is aimed too far to the right
+        # A positive error_y --> blaster is aimed too high
+        error_x = x_center - x_target
+        error_y = y_target - y_center
+        return error_x, error_y
 
 
 # The test code sets up the sensor, then grabs and shows an image in a terminal
@@ -228,7 +268,7 @@ if __name__ == "__main__":
             # Display pixellated grayscale or numbers in CSV format; the CSV
             # could also be written to a file. Spreadsheets, Matlab(tm), or
             # CPython can read CSV and make a decent false-color heat plot.
-            show_image = True
+            show_image = False
             show_csv = False
             if show_image:
                 camera.ascii_image(image)
