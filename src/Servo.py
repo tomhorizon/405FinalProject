@@ -19,6 +19,5 @@ def fire():
 if __name__ == '__main__':
     while True:
         fire()
-    #signal_ch.pulse_width(19000)
         
 
