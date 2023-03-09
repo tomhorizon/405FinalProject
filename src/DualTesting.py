@@ -1,3 +1,4 @@
+# First Dual Testing File
 import pyb
 import utime as time
 import gc
@@ -5,19 +6,12 @@ gc.collect()
 from motor_driver2 import MotorDriver2
 from encoder_reader import EncoderReader
 from control import Control
-#from mlx_cam import MLX_Cam
 from machine import Pin, I2C
-
-#Imports for MLX_Cam stuff
-# import gc
 import array
-#import utime as time
-from machine import Pin, I2C
 from mlx90640 import MLX90640
-# from mlx90640 import RefreshRate
 from mlx90640.calibration import NUM_ROWS, NUM_COLS, IMAGE_SIZE, TEMP_K
-from mlx90640.image import ChessPattern, InterleavedPattern
-
+from mlx90640.image import ChessPattern
+gc.collect()
 # motor constants
 motor1Pin1 = pyb.Pin.board.PB5
 motor1Pin2 = pyb.Pin.board.PA10
@@ -42,13 +36,14 @@ encoder2Pin2 = pyb.Pin.board.PC7
 encoder2Tim = 8
 encoder2Ch1 = 1
 encoder2Ch2 = 2
-
+gc.collect()
 # initialize motors and encoder objects
+#Motor 1 = Yaw. Motor 2 = Pitch
 motor1 = MotorDriver2(motor1Pin1, motor1Pin2, motor1Ena, motor1Tim, motor1Ch1)
 motor2 = MotorDriver2(motor2Pin1, motor2Pin2, motor2Ena, motor2Tim, motor2Ch1)
 encoder1 = EncoderReader(encoder1Pin1, encoder1Pin2, encoder1Tim, encoder1Ch1, encoder1Ch2)
 encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, encoder2Ch2)
-
+gc.collect()
 #MLX_CAM stuff
 class MLX_Cam:
     """!
@@ -78,7 +73,6 @@ class MLX_Cam:
         self._width = width
         ## The height of the image in pixels, which should be 24
         self._height = height
-
         # The MLX90640 object that does the work
         self._camera = MLX90640(i2c, address)
         self._camera.set_pattern(pattern)
@@ -136,12 +130,12 @@ class MLX_Cam:
 
         return image
     
-    def target_alg(self):
+    def target_alg(self, xrange):
         threshhold = 5
 #         x_sum = array.array('i', self._width*[0])
         sum_old = 0
         avg_old = 0
-        for col in range(self._width-1):
+        for col in range(xrange[0], xrange[1] + 1):
             sum = 0
             for row in range(self._height):
                 val = self.pix_map[row][col+1]
@@ -177,81 +171,91 @@ class MLX_Cam:
         error_y = y_target - y_center
         return error_x, error_y
 
-
-def loop():
+def dual():
+    initTime = time.ticks_ms()
     try:
         from pyb import info
-
     # Oops, it's not an STM32; assume generic machine.I2C for ESP32 and others
     except ImportError:
         # For ESP32 38-pin cheapo board from NodeMCU, KeeYees, etc.
         i2c_bus = I2C(1, scl=Pin(22), sda=Pin(21))
-
     # OK, we do have an STM32, so just use the default pin assignments for I2C1
     else:
         i2c_bus = I2C(1)
-
-#     print("MXL90640 Easy(ish) Driver Test")
-
     # Select MLX90640 camera I2C address, normally 0x33, and check the bus
     i2c_address = 0x33
     scanhex = [f"0x{addr:X}" for addr in i2c_bus.scan()]
-#     print(f"I2C Scan: {scanhex}")
-#     print(gc.mem_free())
     gc.collect()
-#     print(gc.mem_free())
     camera = MLX_Cam(i2c_bus)
-    
     gc.collect()
-#     print(gc.mem_free())
     
-#     image = camera.get_image()
-
+    encoder1.zero()
+    encoder2.zero()
+    
     KP1 = .15
+    KP2 = .15
     
-    while True:
-        #gc.collect()
+    setPoint1 = -5000
+    setPoint2 = 0
+    
+    motor1.set_duty_cycle(0)
+    motor2.set_duty_cycle(0)
+    pyb.delay(1500)
+    gc.collect()
+    print("Power On")
+    
+    control1 = Control(KP1, setPoint1 + 32768)
+    control2 = Control(KP1, setPoint2 + 32768)
+    psi1 = 101
+    elapsed = 0
+    startTime = time.ticks_ms()
+    while (psi1 > 100):
+        elapsed = time.ticks_ms() - startTime
+        pos1 = encoder1.read()
+        pos2 = encoder2.read()
+        psi1 = control1.run(pos1)
+        motor1.set_duty_cycle(-psi1)
+        pyb.delay(5)
+        
+        psi2 = control2.run(pos2)
+        motor2.set_duty_cycle(-psi2)
+        pyb.delay(5)
+        
+    motor1.set_duty_cycle(0)
+    motor2.set_duty_cycle(0)
+    
+    xrange = [13, 19]
+    gc.collect()
+#     print(f"Elapsed: {time.ticks_ms() - initTime}")
+    while (time.ticks_ms() - initTime < 5000):
         image = camera.get_image()
-        #gc.collect()
         camera.ascii_art(image.v_ir)
-#         print(camera.target_alg())
-        
-        Yaw_error, Pitch_error = camera.target_alg()
-        
+        Yaw_error, Pitch_error = camera.target_alg(xrange)
         setPoint1 = Yaw_error*61
         setPoint2 = Pitch_error*61
         control1 = Control(KP1, setPoint1 + 32768)
         control2 = Control(KP1, setPoint2 + 32768)
         
-        #print(f'{setPoint1}')
-        #print(f'{setPoint2}')
-
         encoder1.zero()
         encoder2.zero()
         elapsed = 0
         startTime = time.ticks_ms()
+        
         while (psi1 > 100):
             elapsed = time.ticks_ms() - startTime
             pos1 = encoder1.read()
             pos2 = encoder2.read()
-            #print(pos1)
             psi1 = control1.run(pos1)
             motor1.set_duty_cycle(-psi1)
             pyb.delay(5)
             
             psi2 = control2.run(pos2)
             motor2.set_duty_cycle(-psi2)
-            #print(psi)
             pyb.delay(5)
             
-            #print(psi1, psi2)
-        
-#         print("done")
         motor1.set_duty_cycle(0)
         motor2.set_duty_cycle(0)
         
-    
-    
 if __name__ == "__main__":
-    loop()
+    dual()
     
