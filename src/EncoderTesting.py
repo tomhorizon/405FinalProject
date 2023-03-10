@@ -5,7 +5,7 @@ gc.collect()
 from motor_driver2 import MotorDriver2
 from encoder_reader import EncoderReader
 from control import Control
-#from mlx_cam import MLX_Cam
+from mlx_cam import MLX_Cam
 from machine import Pin, I2C
 
 #Imports for MLX_Cam stuff
@@ -50,133 +50,6 @@ encoder1 = EncoderReader(encoder1Pin1, encoder1Pin2, encoder1Tim, encoder1Ch1, e
 encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, encoder2Ch2)
 
 #MLX_CAM stuff
-class MLX_Cam:
-    """!
-    @brief   Class which wraps an MLX90640 thermal infrared camera driver to
-             make it easier to grab and use an image.
-    """
-
-    def __init__(self, i2c, address=0x33, pattern=ChessPattern,
-                 width=NUM_COLS, height=NUM_ROWS):
-        """!
-        @brief   Set up an MLX90640 camera.
-        @param   i2c An I2C bus which has been set up to talk to the camera;
-                 this must be a bus object which has already been set up
-        @param   address The address of the camera on the I2C bus (default 0x33)
-        @param   pattern The way frames are interleaved, as we read only half
-                 the pixels at a time (default ChessPattern)
-        @param   width The width of the image in pixels; leave it at default
-        @param   height The height of the image in pixels; leave it at default
-        """
-        ## The I2C bus to which the camera is attached
-        self._i2c = i2c
-        ## The address of the camera on the I2C bus
-        self._addr = address
-        ## The pattern for reading the camera, usually ChessPattern
-        self._pattern = pattern
-        ## The width of the image in pixels, which should be 32
-        self._width = width
-        ## The height of the image in pixels, which should be 24
-        self._height = height
-
-        # The MLX90640 object that does the work
-        self._camera = MLX90640(i2c, address)
-        self._camera.set_pattern(pattern)
-        gc.collect()
-        self._camera.setup()
-        gc.collect()
-
-        ## A local reference to the image object within the camera driver
-        self._image = self._camera.image
-
-    def ascii_art(self, array):
-        """!
-        @brief   Show a data array from the IR image as ASCII art.
-        @details Each character is repeated twice so the image isn't squished
-                 laterally. A code of "><" indicates an error, probably caused
-                 by a bad pixel in the camera. 
-        @param   array The array to be shown, probably @c image.v_ir
-        """
-        asc = " -.:=+*#%@"
-        scale = 10 / (max(array) - min(array))
-        offset = -min(array)
-        self.pix_map = [[0 for j in range(self._width)] for i in range(self._height)]
-        for row in range(self._height):
-            line = ""
-            for col in range(self._width):
-                pix = int((array[row * self._width + (self._width - col - 1)] + offset) * scale)
-                self.pix_map[row][col] = pix
-                try:
-#                     the_char = MLX_Cam.asc[pix]
-                    the_char = asc[pix]
-                    
-                    #print(f"{the_char}{the_char}", end='')
-                except IndexError: pass
-                    #print("><", end='')
-            #print('')
-        return
-
-
-    def get_image(self):
-        """!
-        @brief   Get one image from a MLX90640 camera.
-        @details Grab one image from the given camera and return it. Both
-                 subframes (the odd checkerboard portions of the image) are
-                 grabbed and combined. This assumes that the camera is in the
-                 ChessPattern (default) mode as it probably should be.
-        @returns A reference to the image object we've just filled with data
-        """
-        for subpage in (0, 1):
-            while not self._camera.has_data:
-                time.sleep_ms(5)
-#                 print('.', end='')
-            self._camera.read_image(subpage)
-            state = self._camera.read_state()
-            image = self._camera.process_image(subpage, state)
-
-        return image
-    
-    def target_alg(self):
-        threshhold = 5
-#         x_sum = array.array('i', self._width*[0])
-        sum_old = 0
-        avg_old = 0
-        for col in range(self._width-1):
-            sum = 0
-            for row in range(self._height):
-                val = self.pix_map[row][col+1]
-                if val > threshhold:
-                    sum = sum + val*val
-            avg = int(sum/32)
-            if avg > avg_old:
-                avg_old = avg
-                x_target = col+1
-        max_y = 0
-        sum_y = 0
-        count = 0
-        for row in range(self._height):
-            sum_y += self.pix_map[row][x_target]
-        avg_row = sum_y/self._height
-        sum_y_ind = 0
-        sum_y_val = 0
-        for row in range(self._height):
-            if self.pix_map[row][x_target] > avg_row:
-                sum_y_ind += row
-                sum_y_val += self.pix_map[row][x_target]*row
-#         print(f"Count: {count}")
-        y_target = sum_y_val/sum_y_ind
-        x_center = self._width/2
-        y_center = self._height/2
-        
-#         print(f"center: ({x_center},{y_center})")
-        print(f"target: ({x_target},{y_target})")
-        # Error is computed with relation to the center of the image.
-        # A positive error_x --> blaster is aimed too far to the right
-        # A positive error_y --> blaster is aimed too high
-        error_x = x_center - x_target
-        error_y = y_target - y_center
-        return error_x, error_y
-
 
 def loop():
     try:
@@ -208,15 +81,16 @@ def loop():
 #     image = camera.get_image()
 
     KP1 = .15
+    KP2 = .15
     
     while True:
         #gc.collect()
         image = camera.get_image()
         #gc.collect()
-        camera.ascii_art(image.v_ir)
+        camera.ascii_art(image)
 #         print(camera.target_alg())
         
-        Yaw_error, Pitch_error = camera.target_alg()
+        Yaw_error, Pitch_error = camera.target_alg([6, 22])
         
         setPoint1 = Yaw_error*61
         setPoint2 = Pitch_error*61
@@ -225,12 +99,13 @@ def loop():
         
         #print(f'{setPoint1}')
         #print(f'{setPoint2}')
-
+        psi1 = 101
         encoder1.zero()
         encoder2.zero()
         elapsed = 0
         startTime = time.ticks_ms()
-        while (psi1 > 100):
+#         while (psi1 > 10):
+        while(elapsed<500):
             elapsed = time.ticks_ms() - startTime
             pos1 = encoder1.read()
             pos2 = encoder2.read()
@@ -250,8 +125,50 @@ def loop():
         motor1.set_duty_cycle(0)
         motor2.set_duty_cycle(0)
         
+def checkCont(yaw, pitch):
+    KP1 = .15
+    KP2 = .15
+    setPoint1 = yaw*61
+    setPoint2 = pitch*61
+    control1 = Control(KP1, setPoint1 + 32768)
+    control2 = Control(KP1, setPoint2 + 32768)
     
+    #print(f'{setPoint1}')
+    #print(f'{setPoint2}')
+    psi1 = 101
+    encoder1.zero()
+    encoder2.zero()
+    elapsed = 0
+    startTime = time.ticks_ms()
+#         while (psi1 > 10):
+    while(elapsed<500):
+        elapsed = time.ticks_ms() - startTime
+        pos1 = encoder1.read()
+        pos2 = encoder2.read()
+        #print(pos1)
+        psi1 = control1.run(pos1)
+        motor1.set_duty_cycle(-psi1)
+        pyb.delay(5)
+        
+        psi2 = control2.run(pos2)
+        motor2.set_duty_cycle(-psi2)
+        #print(psi)
+        pyb.delay(5)
+        
+        #print(psi1, psi2)
+    
+    print("done")
+    motor1.set_duty_cycle(0)
+    motor2.set_duty_cycle(0)
     
 if __name__ == "__main__":
-    loop()
+    while True:
+        print("Down")
+        pyb.delay(500)
+        checkCont(4,4)
+        pyb.delay(500)
+        print("Up")
+        pyb.delay(500)
+        checkCont(-4,-4)
+        pyb.delay(500)
     

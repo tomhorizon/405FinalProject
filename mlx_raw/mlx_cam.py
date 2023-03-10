@@ -123,6 +123,7 @@ class MLX_Cam:
                  by a bad pixel in the camera. 
         @param   array The array to be shown, probably @c image.v_ir
         """
+        self.pix_map = [[0 for j in range(self._width)] for i in range(self._height)]
         scale = len(MLX_Cam.asc) / (max(array) - min(array))
         offset = -min(array)
         for row in range(self._height):
@@ -130,12 +131,13 @@ class MLX_Cam:
             for col in range(self._width):
                 pix = int((array[row * self._width + (self._width - col - 1)]
                            + offset) * scale)
-                try:
-                    the_char = MLX_Cam.asc[pix]
-                    print(f"{the_char}{the_char}", end='')
-                except IndexError:
-                    print("><", end='')
-            print('')
+                self.pix_map[row][col] = pix
+#                 try:
+#                     the_char = MLX_Cam.asc[pix]
+#                     print(f"{the_char}{the_char}", end='')
+#                 except IndexError:
+#                     print("><", end='')
+#             print('')
         return
 
 
@@ -181,11 +183,12 @@ class MLX_Cam:
         for subpage in (0, 1):
             while not self._camera.has_data:
                 time.sleep_ms(50)
-                print('.', end='')
+#                 print('.', end='')
             image = self._camera.read_image(subpage)
 
         return image
-    def target_alg(self, xrange, array):
+    
+    def target_alg(self, xrange):
         threshhold = 5
 #         x_sum = array.array('i', self._width*[0])
         sum_old = 0
@@ -193,10 +196,10 @@ class MLX_Cam:
         for col in range(xrange[0], xrange[1] + 1):
             sum = 0
             for row in range(self._height):
-                val = array[row][col+1]
+                val = self.pix_map[row][col+1]
                 if val > threshhold:
                     sum = sum + val*val
-            avg = int(sum/32)
+            avg = int(sum/(xrange[1]-xrange[0]))
             if avg > avg_old:
                 avg_old = avg
                 x_target = col+1
@@ -204,16 +207,20 @@ class MLX_Cam:
         sum_y = 0
         count = 0
         for row in range(self._height):
-            sum_y += self.array[row][x_target]
-        avg_row = sum_y/self._height
-        sum_y_ind = 0
-        sum_y_val = 0
-        for row in range(self._height):
-            if self.array[row][x_target] > avg_row:
-                sum_y_ind += row
-                sum_y_val += self.array[row][x_target]*row
+            if self.pix_map[row][x_target] >= max_y and row > 4:
+                max_y = self.pix_map[row][x_target]
+                y_target = row
+                print("ytargetset")
+#             sum_y += self.pix_map[row][x_target]
+#         avg_col = sum_y/(self._height)
+#         sum_y_ind = 0
+#         sum_y_val = 0
+#         for row in range(self._height):
+#             if self.pix_map[row][x_target] > avg_col:
+#                 sum_y_ind += row
+#                 sum_y_val += self.pix_map[row][x_target]*row
 #         print(f"Count: {count}")
-        y_target = sum_y_val/sum_y_ind
+#         y_target = sum_y_val/sum_y_ind
         x_center = self._width/2
         y_center = self._height/2
         
@@ -246,12 +253,12 @@ if __name__ == "__main__":
     else:
         i2c_bus = I2C(1)
 
-    print("MXL90640 Easy(ish) Driver Test")
+#     print("MXL90640 Easy(ish) Driver Test")
 
     # Select MLX90640 camera I2C address, normally 0x33, and check the bus
     i2c_address = 0x33
     scanhex = [f"0x{addr:X}" for addr in i2c_bus.scan()]
-    print(f"I2C Scan: {scanhex}")
+#     print(f"I2C Scan: {scanhex}")
 
     # Create the camera object and set it up in default mode
     camera = MLX_Cam(i2c_bus)
@@ -268,7 +275,7 @@ if __name__ == "__main__":
             # Display pixellated grayscale or numbers in CSV format; the CSV
             # could also be written to a file. Spreadsheets, Matlab(tm), or
             # CPython can read CSV and make a decent false-color heat plot.
-            show_image = False
+            show_image = True
             show_csv = False
             if show_image:
                 camera.ascii_image(image)
@@ -277,6 +284,9 @@ if __name__ == "__main__":
                     print(line)
             else:
                 camera.ascii_art(image)
+            camera.ascii_art(image)
+            x_e, y_e = camera.target_alg([6,26])
+            print(f"Error: ({x_e},{y_e})")
             time.sleep_ms(3000)
 
         except KeyboardInterrupt:
