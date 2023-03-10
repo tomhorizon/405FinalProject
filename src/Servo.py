@@ -11,8 +11,10 @@ class Servo:
         
         
     def fire(self):
+        print("servo engage")
         self.signal_ch.pulse_width(8000)
         pyb.delay(400)
+        print("servo disengage")
         self.signal_ch.pulse_width(19000)
         pyb.delay(400)
         
@@ -21,8 +23,10 @@ if __name__ == '__main__':
     servo_pin = pyb.Pin(pyb.Pin.board.PC9, pyb.Pin.OUT_PP)
     signal_ch = servo_signal.channel(4, pyb.Timer.PWM, pin=servo_pin, pulse_width=8000)
     while True:
+        print("Servo Engage")
         signal_ch.pulse_width(8000)
         pyb.delay(400)
+        print("Servo Disengage")
         signal_ch.pulse_width(19000)
         pyb.delay(400)
         print("shot")
