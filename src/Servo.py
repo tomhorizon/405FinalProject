@@ -23,11 +23,13 @@ if __name__ == '__main__':
     servo_pin = pyb.Pin(pyb.Pin.board.PC9, pyb.Pin.OUT_PP)
     signal_ch = servo_signal.channel(4, pyb.Timer.PWM, pin=servo_pin, pulse_width=8000)
     while True:
+        print("Servo Engage")
         signal_ch.pulse_width(8000)
         pyb.delay(225)
         signal_ch.pulse_width(22000)
-        pyb.delay(400)
-        print("shot")
+        pyb.delay(500)
+
+
     
     
 

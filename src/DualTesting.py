@@ -13,6 +13,7 @@ from mlx90640.calibration import NUM_ROWS, NUM_COLS, IMAGE_SIZE, TEMP_K
 from mlx90640.image import ChessPattern, InterleavedPattern
 from mlx_cam import MLX_Cam
 from Servo import Servo
+from flyhweel import Flywheel
 
 gc.collect()
 # motor constants
@@ -51,6 +52,7 @@ motor2 = MotorDriver2(motor2Pin1, motor2Pin2, motor2Ena, motor2Tim, motor2Ch1)
 encoder1 = EncoderReader(encoder1Pin1, encoder1Pin2, encoder1Tim, encoder1Ch1, encoder1Ch2)
 encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, encoder2Ch2)
 servo = Servo(servoPin, servoTim, servoCh)
+flywheel = Flywheel()
 gc.collect()
 
 gc.collect() 
@@ -75,6 +77,8 @@ def dual():
     
     encoder1.zero()
     encoder2.zero()
+    
+    flywheel.murder(2)
     
     KP1 = .15
     KP2 = .15
@@ -105,7 +109,7 @@ def dual():
         psi2 = control2.run(pos2)
         motor2.set_duty_cycle(-psi2)
         pyb.delay(5)
-        
+    flywheel.murder(10)    
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     xrange = [6, 26]
@@ -147,8 +151,12 @@ def dual():
         
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
-    print("shoot")
+    pyb.delay(20)
     servo.fire()
+    print("shoot")
+    pyb.delay(500)
+    flywheel.murder(0)
+    print("Target Engaged")
     
 if __name__ == "__main__":
     dual()
