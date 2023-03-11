@@ -14,6 +14,8 @@ from mlx90640.image import ChessPattern, InterleavedPattern
 from mlx_cam import MLX_Cam
 from Servo import Servo
 from flyhweel import Flywheel
+from fireLED import FireLED
+from buzzer import Buzzer
 
 gc.collect()
 # motor constants
@@ -42,9 +44,21 @@ encoder2Ch1 = 1
 encoder2Ch2 = 2
 gc.collect()
 
+# servo contants
 servoPin = pyb.Pin.board.PC9
 servoTim = 3
 servoCh = 4
+
+# buzzer constants
+buzzerPin = pyb.Pin.board.PA9
+buzzerTimer = 1
+buzzerChannel = 2
+
+# LED constants
+LEDpin = pyb.Pin.board.PA8
+LEDtimer = 1
+LEDchannel = 1
+
 # initialize motors and encoder objects
 #Motor 1 = Yaw. Motor 2 = Pitch
 motor1 = MotorDriver2(motor1Pin1, motor1Pin2, motor1Ena, motor1Tim, motor1Ch1)
@@ -52,12 +66,12 @@ motor2 = MotorDriver2(motor2Pin1, motor2Pin2, motor2Ena, motor2Tim, motor2Ch1)
 encoder1 = EncoderReader(encoder1Pin1, encoder1Pin2, encoder1Tim, encoder1Ch1, encoder1Ch2)
 encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, encoder2Ch2)
 servo = Servo(servoPin, servoTim, servoCh)
-flywheel = Flywheel()
-gc.collect()
 
-gc.collect() 
+servo.fire()
+LED = FireLED(LEDpin, LEDtimer, LEDchannel)
+alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
+# flywheel = Flywheel()
 def dual():
-    gc.collect()
     initTime = time.ticks_ms()
     try:
         from pyb import info
@@ -78,27 +92,27 @@ def dual():
     encoder1.zero()
     encoder2.zero()
     
-    flywheel.murder(2)
+#     flywheel.murder(2)
     
     KP1 = .15
     KP2 = .15
     
-    setPoint1 = -5500
+    setPoint1 = -6400
     setPoint2 = 0
     
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
-    pyb.delay(1500)
+    pyb.delay(500)
     gc.collect()
     print("Power On")
-    
+    pyb.delay(1000)
     control1 = Control(KP1, setPoint1 + 32768)
     control2 = Control(KP1, setPoint2 + 32768)
     psi1 = 101
     elapsed = 0
     startTime = time.ticks_ms()
-    while (abs(psi1) > 10):
-#     while (elapsed < 2000):
+#     while (abs(psi1) > 10):
+    while (elapsed < 3000):
         elapsed = time.ticks_ms() - startTime
         pos1 = encoder1.read()
         pos2 = encoder2.read()
@@ -109,7 +123,8 @@ def dual():
         psi2 = control2.run(pos2)
         motor2.set_duty_cycle(-psi2)
         pyb.delay(5)
-    flywheel.murder(10)    
+    
+#     flywheel.murder(10)    
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     xrange = [6, 26]
@@ -137,27 +152,38 @@ def dual():
     KP1 = .15
     KP2 = .15
 #     while (abs(psi2) > 2):
-    while (elapsed < 500):
+    while (elapsed < 1000):
         elapsed = time.ticks_ms() - startTime
         pos1 = encoder1.read()
         pos2 = encoder2.read()
         psi1 = control1.run(pos1)
         motor1.set_duty_cycle(-psi1)
+        alarm.beep(psi1)
         pyb.delay(5)
         
         psi2 = control2.run(pos2)
         motor2.set_duty_cycle(-psi2)
         pyb.delay(5)
-        
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     pyb.delay(20)
-    servo.fire()
-    print("shoot")
-    pyb.delay(500)
-    flywheel.murder(0)
+    alarm.alarmOff()
+    LED.on()
+    pyb.delay(20)
+    servo.magDump(5)
+    pyb.delay(20)
+    LED.off()
+#     print("shoot")
+#     pyb.delay(500)
+#     flywheel.murder(0)
     print("Target Engaged")
     
 if __name__ == "__main__":
+#     servo.fire()
+#     LED.on()
+#     alarm.beep(50)
+#     pyb.delay(500)
+#     LED.off()
+#     alarm.alarmOff()
     dual()
     

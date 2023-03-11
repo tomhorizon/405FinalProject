@@ -43,11 +43,24 @@ encoder2Tim = 8
 encoder2Ch1 = 1
 encoder2Ch2 = 2
 
-# initialize motors and encoder objects
+# buzzer constants
+buzzerPin = pyb.Pin.board.PB0
+buzzerTimer = 3
+buzzerChannel = 3
+
+# LED constants
+LEDpin = pyb.Pin.board.PB4
+LEDtimer = 3
+LEDchannel = 1
+
+
+# initialize motors, encoders, LED, alarm objects
 motor1 = MotorDriver2(motor1Pin1, motor1Pin2, motor1Ena, motor1Tim, motor1Ch1)
 motor2 = MotorDriver2(motor2Pin1, motor2Pin2, motor2Ena, motor2Tim, motor2Ch1)
 encoder1 = EncoderReader(encoder1Pin1, encoder1Pin2, encoder1Tim, encoder1Ch1, encoder1Ch2)
 encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, encoder2Ch2)
+LED = FireLED(LEDpin, LEDtimer, LEDchannel)
+alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
 
 #MLX_CAM stuff
 
@@ -111,6 +124,7 @@ def loop():
             pos2 = encoder2.read()
             #print(pos1)
             psi1 = control1.run(pos1)
+            alarm.beep(psi1)
             motor1.set_duty_cycle(-psi1)
             pyb.delay(5)
             
