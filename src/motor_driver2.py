@@ -1,5 +1,6 @@
 import pyb
 
+## IF YOU ARE PLANNING ON TESTING MOTORS, UNPLUG THE ONES NOT USED
 
 class MotorDriver2:
     """! @brief The DC motor is powered by an external 12V supply. The STM32

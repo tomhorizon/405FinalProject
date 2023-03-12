@@ -13,7 +13,6 @@ from mlx90640.calibration import NUM_ROWS, NUM_COLS, IMAGE_SIZE, TEMP_K
 from mlx90640.image import ChessPattern, InterleavedPattern
 from mlx_cam import MLX_Cam
 from Servo import Servo
-from flyhweel import Flywheel
 from fireLED import FireLED
 from buzzer import Buzzer
 from math import sin
@@ -136,11 +135,15 @@ def dual():
     encoder1.zero()
     encoder2.zero()
     
-    flywheel.set_duty_cycle(3)
+    flywheel.set_duty_cycle(12)
     
     KP1 = .15
-    KP2 = .15
+    KI1 = .5
+    KD1 = 0
     
+    KP2 = .15
+    KI2 = .15
+    KD2 = 0
 #     setPoint1 = -6400
     setPoint1 = 0 # just testing on my desk an don't want it rotating lol
     setPoint2 = 0
@@ -151,19 +154,20 @@ def dual():
     gc.collect()
     print("Power On")
     pyb.delay(1000)
-    control1 = Control(KP1, setPoint1 + 32768)
-    control2 = Control(KP1, setPoint2 + 32768)
+    
     psi1 = 101
     elapsed = 0
-    startTime = time.ticks_ms()
-#     while (abs(psi1) > 10):
     LED.hunt()
+    startTime = time.ticks_ms()
+    control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
+    control2 = Control2(KP2, KI2, KD2, setPoint2 + 32768)
     while (elapsed < 3000):
         elapsed = time.ticks_ms() - startTime
         pos1 = encoder1.read()
         pos2 = encoder2.read()
+        
         psi1 = control1.run(pos1)
-        motor1.set_duty_cycle(-psi1)
+        motor1.set_duty_cycle(psi1)
         pyb.delay(5)
         
         psi2 = control2.run(pos2)
@@ -177,41 +181,34 @@ def dual():
     yaw_sum = 0
     pitch_sum = 0
     print(f"Elapsed: {time.ticks_ms() - initTime}")
-    servo.magDump(1)
     #while ((time.ticks_ms() - initTime) < 5000):
-    image = camera.get_image()   #freezing here, it was working before?? wtf
-    print("a")
+    image = camera.get_image()
     camera.ascii_art(image)
-    print("b")
     Yaw_error, Pitch_error = camera.target_alg(xrange)
-    print("c")
     setPoint1 = Yaw_error*61
     setPoint2 = Pitch_error*61
     
     print(f"Yaw_e = {Yaw_error}, Pitch_e = {Pitch_error}")
-    control1 = Control(KP1, setPoint1 + 32768)
-    control2 = Control(KP2, setPoint2 + 32768)
-    
     encoder1.zero()
     encoder2.zero()
     elapsed = 0
     startTime = time.ticks_ms()
     
-    psi2 = 51
-    KP1 = .15
-    KP2 = .15
+#     psi2 = 51
 #     while (abs(psi2) > 2):
-    while (elapsed < 1000):
+    control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
+    control2 = Control2(KP2, KI2, KD2, setPoint2 + 32768)
+    while (elapsed < 100):
         elapsed = time.ticks_ms() - startTime
         pos1 = encoder1.read()
         pos2 = encoder2.read()
         psi1 = control1.run(pos1)
-        motor1.set_duty_cycle(-psi1)
+        motor1.set_duty_cycle(psi1)
         alarm.beep(psi1)
         pyb.delay(5)
         
         psi2 = control2.run(pos2)
-        motor2.set_duty_cycle(-psi2)
+        motor2.set_duty_cycle(psi2)
         pyb.delay(5)
         
     motor1.set_duty_cycle(0)
