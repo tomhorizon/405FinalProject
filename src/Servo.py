@@ -23,9 +23,9 @@ class Servo:
     def magDump(self, num):
         for i in range(num):
             self.signal_ch.pulse_width(8000)
-            pyb.delay(270)
+            pyb.delay(300)
             self.signal_ch.pulse_width(23000)
-            pyb.delay(270)
+            pyb.delay(400)
         
 if __name__ == '__main__':
     
@@ -45,7 +45,10 @@ if __name__ == '__main__':
     
     while 1:
         serv = Servo(pyb.Pin.board.PC9, 3, 4)
-        serv.fire()
+        #serv.fire()
+        print("start")
+        serv.magDump(5)
+        print("done")
     
     
 
