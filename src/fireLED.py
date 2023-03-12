@@ -3,7 +3,7 @@ import pyb
 class FireLED:
     def __init__(self, ledPin, timer_num, timerCh1):
         self.ledPin = pyb.Pin(ledPin, pyb.Pin.OUT_PP)
-        self.timer = pyb.Timer(timer_num, freq=10)
+        self.timer = pyb.Timer(timer_num, freq=500)
         self.ch1 = self.timer.channel(timerCh1, pyb.Timer.PWM, pin=self.ledPin, pulse_width_percent = 0)
     
     def on(self):
@@ -18,16 +18,25 @@ class FireLED:
     def frequency(self, level):
         self.timer.freq(level)
         
+    def powerUp(self):
+        self.ch1.pulse_width_percent(0)
+        self.timer.freq(500)
+        for i in range(70):
+            self.ch1.pulse_width_percent(i)
+            pyb.delay(50)
+        self.timer.freq(10)
+        self.ch1.pulse_width_percent(100)
+        
+    def hunt(self):
+        self.ch1.pulse_width_percent(30)
+        
+        
 if __name__ == "__main__":
-    ledPin = pyb.Pin.board.PB4
-    timer = 3
-    channel = 1
-    LED = FireLED(ledPin, timer, channel)
-    while 0:
-        LED.level(int(input("Level: ")))
+    LEDpin = pyb.Pin.board.PA8
+    LEDtimer = 1
+    LEDchannel = 1
+    LED = FireLED(LEDpin, LEDtimer, LEDchannel)
+    LED.powerUp()
     while 1:
-        LED.on()
-        LED.level(100)
-        for i in range(100):
-            LED.frequency(i+1)
-            pyb.delay(i*100)
+        LED.level(int(input("Level: ")))
+    

@@ -16,6 +16,8 @@ from Servo import Servo
 from flyhweel import Flywheel
 from fireLED import FireLED
 from buzzer import Buzzer
+from math import sin
+from math import cos
 
 gc.collect()
 # motor constants
@@ -59,18 +61,60 @@ LEDpin = pyb.Pin.board.PA8
 LEDtimer = 1
 LEDchannel = 1
 
+# Flywheel constants
+flywheelPin1 = pyb.Pin.board.PC5
+flywheelPin2 = pyb.Pin.board.PB8
+flywheelEna = pyb.Pin.board.PC8
+flywheelTim = 3
+flywheelCh = 3
+
 # initialize motors and encoder objects
 #Motor 1 = Yaw. Motor 2 = Pitch
 motor1 = MotorDriver2(motor1Pin1, motor1Pin2, motor1Ena, motor1Tim, motor1Ch1)
 motor2 = MotorDriver2(motor2Pin1, motor2Pin2, motor2Ena, motor2Tim, motor2Ch1)
+flywheel = MotorDriver2(flywheelPin1, flywheelPin2, flywheelEna, flywheelTim, flywheelCh)
 encoder1 = EncoderReader(encoder1Pin1, encoder1Pin2, encoder1Tim, encoder1Ch1, encoder1Ch2)
 encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, encoder2Ch2)
 servo = Servo(servoPin, servoTim, servoCh)
-
-servo.fire()
 LED = FireLED(LEDpin, LEDtimer, LEDchannel)
 alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
-# flywheel = Flywheel()
+
+def initialize():
+    alarm.powerUp()
+    LED.powerUp()
+    entry = input("Enter to start shakedown. Turn on High Voltage Power before continuing.\nEnsure turret is level and safe to rotate.")
+    
+    print("Testing Servo.")
+    servo.powerUp()
+    
+    print("Testing flywheels.")
+    flywheel.set_duty_cycle(0)
+    flywheel.set_duty_cycle(3)
+    pyb.delay(500)
+    flywheel.set_duty_cycle(0)
+    
+    print("Testing yaw motor.")
+    motor1.set_duty_cycle(-25)
+    pyb.delay(250)
+    motor1.set_duty_cycle(25)
+    pyb.delay(250)
+    motor1.set_duty_cycle(0)
+    pyb.delay(250)
+    
+#     for i in range(1000):
+#         motor1.set_duty_cycle(20*sin(2*3.1415/(i*+1)))
+#         pyb.delay(10)
+    
+    print("Testing pitch motor.")
+    motor2.set_duty_cycle(-25)
+    pyb.delay(250)
+    motor2.set_duty_cycle(25)
+    pyb.delay(250)
+    motor2.set_duty_cycle(0)
+    pyb.delay(250)
+    
+    print("Shakedown complete.")
+    
 def dual():
     initTime = time.ticks_ms()
     try:
@@ -81,7 +125,7 @@ def dual():
         i2c_bus = I2C(1, scl=Pin(22), sda=Pin(21))
     # OK, we do have an STM32, so just use the default pin assignments for I2C1
     else:
-        i2c_bus = I2C(1)
+        i2c_bus = I2C(2)    # Keep this at 2 - had to change some pins around, i2c2 works
     # Select MLX90640 camera I2C address, normally 0x33, and check the bus
     i2c_address = 0x33
     scanhex = [f"0x{addr:X}" for addr in i2c_bus.scan()]
@@ -92,14 +136,15 @@ def dual():
     encoder1.zero()
     encoder2.zero()
     
-#     flywheel.murder(2)
+    flywheel.set_duty_cycle(3)
     
     KP1 = .15
     KP2 = .15
     
-    setPoint1 = -6400
+#     setPoint1 = -6400
+    setPoint1 = 0 # just testing on my desk an don't want it rotating lol
     setPoint2 = 0
-    
+     
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     pyb.delay(500)
@@ -112,6 +157,7 @@ def dual():
     elapsed = 0
     startTime = time.ticks_ms()
 #     while (abs(psi1) > 10):
+    LED.hunt()
     while (elapsed < 3000):
         elapsed = time.ticks_ms() - startTime
         pos1 = encoder1.read()
@@ -124,7 +170,6 @@ def dual():
         motor2.set_duty_cycle(-psi2)
         pyb.delay(5)
     
-#     flywheel.murder(10)    
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     xrange = [6, 26]
@@ -132,12 +177,16 @@ def dual():
     yaw_sum = 0
     pitch_sum = 0
     print(f"Elapsed: {time.ticks_ms() - initTime}")
-    while (time.ticks_ms() - initTime < 5000):
-        image = camera.get_image()
-        camera.ascii_art(image)
-        Yaw_error, Pitch_error = camera.target_alg(xrange)
-        setPoint1 = Yaw_error*61
-        setPoint2 = Pitch_error*61
+    servo.magDump(1)
+    #while ((time.ticks_ms() - initTime) < 5000):
+    image = camera.get_image()   #freezing here, it was working before?? wtf
+    print("a")
+    camera.ascii_art(image)
+    print("b")
+    Yaw_error, Pitch_error = camera.target_alg(xrange)
+    print("c")
+    setPoint1 = Yaw_error*61
+    setPoint2 = Pitch_error*61
     
     print(f"Yaw_e = {Yaw_error}, Pitch_e = {Pitch_error}")
     control1 = Control(KP1, setPoint1 + 32768)
@@ -164,15 +213,18 @@ def dual():
         psi2 = control2.run(pos2)
         motor2.set_duty_cycle(-psi2)
         pyb.delay(5)
+        
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     pyb.delay(20)
-    alarm.alarmOff()
+    alarm.off()
     LED.on()
     pyb.delay(20)
-    servo.magDump(5)
+    servo.magDump(1)
     pyb.delay(20)
-    LED.off()
+    LED.on()
+    flywheel.set_duty_cycle(0)
+    
 #     print("shoot")
 #     pyb.delay(500)
 #     flywheel.murder(0)
@@ -185,5 +237,8 @@ if __name__ == "__main__":
 #     pyb.delay(500)
 #     LED.off()
 #     alarm.alarmOff()
+    initialize()
+    entry = input("Waiting for go ahead. TURN OFF MAIN POWER BEFORE ABORTING.")
     dual()
+    entry = input("Waiting for end. TURN OFF MAIN POWER BEFORE RESETTING.")
     

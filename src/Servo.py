@@ -11,6 +11,14 @@ class Servo:
         self.back = 23000
         self.time = 350
         
+    def powerUp(self):
+        print("servo disengage")
+        self.signal_ch.pulse_width(23000)
+        pyb.delay(270)
+        self.signal_ch.pulse_width(18000)
+        pyb.delay(100)
+        self.signal_ch.pulse_width(23000)
+        pyb.delay(100)
         
     def fire(self):
         print("servo engage")
@@ -47,8 +55,9 @@ if __name__ == '__main__':
         serv = Servo(pyb.Pin.board.PC9, 3, 4)
         #serv.fire()
         print("start")
-        serv.magDump(5)
+        serv.magDump(3)
         print("done")
+        pyb.delay(2000)
     
     
 

@@ -2,7 +2,7 @@ import pyb
 
 class Buzzer:
     def __init__(self, buzzerPin, timer_num, timerCh1):
-        self.buzzerPin = pyb.Pin(buzzerPin, pyb.Pin.OUT_PP, alt = 1)
+        self.buzzerPin = pyb.Pin(buzzerPin, pyb.Pin.OUT_PP, pyb.Pin.PULL_DOWN, alt = 1)
         self.timer = pyb.Timer(timer_num, freq=10)
         self.ch1 = self.timer.channel(timerCh1, pyb.Timer.PWM, pin=self.buzzerPin, pulse_width_percent = 0)
     
@@ -14,15 +14,23 @@ class Buzzer:
         if psi < 99:
             self.ch1.pulse_width_percent(psi)
             
-    def alarmOff(self):
+    def powerUp(self):
+        self.ch1.pulse_width_percent(50)
+        pyb.delay(250)
         self.ch1.pulse_width_percent(0)
         
+    def off(self):
+        self.ch1.pulse_width_percent(0)
+        
+        
+        
 if __name__ == "__main__":
-    buzzerPin = pyb.Pin.board.PB0
-    timer = 3
-    channel = 3
-    alarm = Buzzer(buzzerPin, timer, channel)
+    buzzerPin = pyb.Pin.board.PA9
+    buzzerTimer = 1
+    buzzerChannel = 2
+    alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
     while 1:
+        alarm.powerUp()
         alarm.beep(int(input("Level: ")))
     while 0:
         for i in range(100):
