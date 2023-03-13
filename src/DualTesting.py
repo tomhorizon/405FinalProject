@@ -5,7 +5,7 @@ import gc
 gc.collect()
 from motor_driver2 import MotorDriver2
 from encoder_reader import EncoderReader
-from control import Control
+from control2 import Control2
 from machine import Pin, I2C
 import array
 from mlx90640 import MLX90640
@@ -77,22 +77,19 @@ encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, e
 servo = Servo(servoPin, servoTim, servoCh)
 LED = FireLED(LEDpin, LEDtimer, LEDchannel)
 alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
+flywheel.set_duty_cycle(0)
 
 def initialize():
+    print("Booting up...")
     alarm.powerUp()
     LED.powerUp()
+    
     entry = input("Enter to start shakedown. Turn on High Voltage Power before continuing.\nEnsure turret is level and safe to rotate.")
-    
-    print("Testing Servo.")
     servo.powerUp()
-    
-    print("Testing flywheels.")
     flywheel.set_duty_cycle(0)
     flywheel.set_duty_cycle(3)
     pyb.delay(500)
     flywheel.set_duty_cycle(0)
-    
-    print("Testing yaw motor.")
     motor1.set_duty_cycle(-25)
     pyb.delay(250)
     motor1.set_duty_cycle(25)
@@ -103,8 +100,6 @@ def initialize():
 #     for i in range(1000):
 #         motor1.set_duty_cycle(20*sin(2*3.1415/(i*+1)))
 #         pyb.delay(10)
-    
-    print("Testing pitch motor.")
     motor2.set_duty_cycle(-25)
     pyb.delay(250)
     motor2.set_duty_cycle(25)
@@ -135,44 +130,43 @@ def dual():
     encoder1.zero()
     encoder2.zero()
     
-    flywheel.set_duty_cycle(12)
+    flywheel.set_duty_cycle(6)
     
-    KP1 = .15
-    KI1 = .5
-    KD1 = 0
+    KP1 = .008
+    KI1 = .01
+    KD1 = .0
     
-    KP2 = .15
-    KI2 = .15
-    KD2 = 0
+    KP2 = .008
+    KI2 = .015
+    KD2 = .03
+    
 #     setPoint1 = -6400
     setPoint1 = 0 # just testing on my desk an don't want it rotating lol
     setPoint2 = 0
      
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
-    pyb.delay(500)
     gc.collect()
     print("Power On")
-    pyb.delay(1000)
-    
     psi1 = 101
     elapsed = 0
     LED.hunt()
     startTime = time.ticks_ms()
-    control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
-    control2 = Control2(KP2, KI2, KD2, setPoint2 + 32768)
-    while (elapsed < 3000):
-        elapsed = time.ticks_ms() - startTime
-        pos1 = encoder1.read()
-        pos2 = encoder2.read()
-        
-        psi1 = control1.run(pos1)
-        motor1.set_duty_cycle(psi1)
-        pyb.delay(5)
-        
-        psi2 = control2.run(pos2)
-        motor2.set_duty_cycle(-psi2)
-        pyb.delay(5)
+#     control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
+#     control2 = Control2(KP2, KI2, KD2, setPoint2 + 32768)
+#     pyb.delay(5)
+#     while (elapsed < 3000):
+#         elapsed = time.ticks_ms() - startTime
+#         pos1 = encoder1.read()
+#         pos2 = encoder2.read()
+#         
+#         psi1 = control1.run(pos1)
+#         motor1.set_duty_cycle(psi1)
+#         pyb.delay(5)
+#         
+#         psi2 = control2.run(pos2)
+#         motor2.set_duty_cycle(-psi2)
+#         pyb.delay(5)
     
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
@@ -182,6 +176,8 @@ def dual():
     pitch_sum = 0
     print(f"Elapsed: {time.ticks_ms() - initTime}")
     #while ((time.ticks_ms() - initTime) < 5000):
+    
+    
     image = camera.get_image()
     camera.ascii_art(image)
     Yaw_error, Pitch_error = camera.target_alg(xrange)
@@ -196,19 +192,23 @@ def dual():
     
 #     psi2 = 51
 #     while (abs(psi2) > 2):
+
     control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
     control2 = Control2(KP2, KI2, KD2, setPoint2 + 32768)
-    while (elapsed < 100):
+    pyb.delay(5)
+    while (elapsed < 1200):
         elapsed = time.ticks_ms() - startTime
+        
         pos1 = encoder1.read()
         pos2 = encoder2.read()
-        psi1 = control1.run(pos1)
-        motor1.set_duty_cycle(psi1)
-        alarm.beep(psi1)
-        pyb.delay(5)
         
+        psi1 = control1.run(pos1)
         psi2 = control2.run(pos2)
+        
+        motor1.set_duty_cycle(-psi1)
         motor2.set_duty_cycle(psi2)
+        
+        alarm.beep(psi1)
         pyb.delay(5)
         
     motor1.set_duty_cycle(0)
@@ -217,7 +217,7 @@ def dual():
     alarm.off()
     LED.on()
     pyb.delay(20)
-    servo.magDump(1)
+    servo.magDump(3)
     pyb.delay(20)
     LED.on()
     flywheel.set_duty_cycle(0)

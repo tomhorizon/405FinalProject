@@ -34,17 +34,17 @@ motor2 = MotorDriver2(motor2Pin1, motor2Pin2, motor2Ena, motor2Tim, motor2Ch1)
 encoder1 = EncoderReader(encoder1Pin1, encoder1Pin2, encoder1Tim, encoder1Ch1, encoder1Ch2)
 encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, encoder2Ch2)
 
-def loop():
-    setPoint1 = int(input("SP1:"))
-    setPoint2 = int(input("SP2:"))
-    entry = input("Hit Enter after power is on")
+def loop(setPoint1, setPoint2):
+    #setPoint1 = int(input("SP1:"))
+    #setPoint2 = int(input("SP2:"))
+    #entry = input("Hit Enter after power is on")
     
-    KP1 = .01
-    KI1 = .04
-    KD1 = .03
+    KP1 = .008
+    KI1 = .01
+    KD1 = .0
     
-    KP2 = .02
-    KI2 = .02
+    KP2 = .008
+    KI2 = .015
     KD2 = .03
     
     motor1.set_duty_cycle(0)
@@ -73,8 +73,16 @@ def loop():
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     
-    entry = input("done")
+    #entry = input("done")
     
 if __name__ == "__main__":
-    loop()
+    entry = input("enter")
+    while 1:
+        print("Positive Values")
+        loop(3000, 120)
+        pyb.delay(500)
+        
+        print("Negative Values")
+        loop(-3000, -120)
+        pyb.delay(500)
     

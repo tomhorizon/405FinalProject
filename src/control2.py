@@ -27,8 +27,7 @@ class Control2:
         self.psiD = self.kd*(self.error - self.error_prev)/(self.t - self.t_prev)
         self.psi = self.psiP + self.psiI + self.psiD
         
-        
-        print(f"error: {self.error:.2f}\teffort: {self.psi:.2f}\tP: {self.psiP:.2f}\tI: {self.psiI:.2f}\tD: {self.psiD:.2f}")
+        #print(f"error: {self.error:.2f}\teffort: {self.psi:.2f}\tP: {self.psiP:.2f}\tI: {self.psiI:.2f}\tD: {self.psiD:.2f}")
         
         self.error_prev = self.error
         self.t_prev = self.t
