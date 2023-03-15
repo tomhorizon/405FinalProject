@@ -78,6 +78,8 @@ servo = Servo(servoPin, servoTim, servoCh)
 LED = FireLED(LEDpin, LEDtimer, LEDchannel)
 alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
 flywheel.set_duty_cycle(0)
+motor1.set_duty_cycle(0)
+motor2.set_duty_cycle(0)
 
 
 KP1 = .009
@@ -168,7 +170,7 @@ def dual():
     pitch_sum = 0
     
     #change pain level here  (x / 100)
-    flywheel.set_duty_cycle(20)
+    flywheel.set_duty_cycle(12)
     pyb.delay(2000)
     
     elapsed = 0
