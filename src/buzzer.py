@@ -14,9 +14,14 @@ class Buzzer:
         if psi < 99:
             self.ch1.pulse_width_percent(psi)
             
+    def numBeep(self, n):
+        self.ch1.pulse_width_percent(50)
+        pyb.delay(100*n)
+        self.ch1.pulse_width_percent(0)
+            
     def powerUp(self):
         self.ch1.pulse_width_percent(50)
-        pyb.delay(250)
+        pyb.delay(200)
         self.ch1.pulse_width_percent(0)
         
     def off(self):

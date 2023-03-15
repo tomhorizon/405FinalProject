@@ -17,6 +17,7 @@ from fireLED import FireLED
 from buzzer import Buzzer
 from math import sin
 from math import cos
+from goButton import GoButton
 
 gc.collect()
 # motor constants
@@ -67,6 +68,8 @@ flywheelEna = pyb.Pin.board.PC8
 flywheelTim = 3
 flywheelCh = 3
 
+goButtonPin = pyb.Pin.board.PA15
+
 # initialize motors and encoder objects
 #Motor 1 = Yaw. Motor 2 = Pitch
 motor1 = MotorDriver2(motor1Pin1, motor1Pin2, motor1Ena, motor1Tim, motor1Ch1)
@@ -77,7 +80,10 @@ encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, e
 servo = Servo(servoPin, servoTim, servoCh)
 LED = FireLED(LEDpin, LEDtimer, LEDchannel)
 alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
+goButton = GoButton(goButtonPin)
 flywheel.set_duty_cycle(0)
+motor1.set_duty_cycle(0)
+motor2.set_duty_cycle(0)
 
 
 KP1 = .009
@@ -168,7 +174,7 @@ def dual():
     pitch_sum = 0
     
     #change pain level here  (x / 100)
-    flywheel.set_duty_cycle(20)
+    flywheel.set_duty_cycle(12)
     pyb.delay(2000)
     
     elapsed = 0
