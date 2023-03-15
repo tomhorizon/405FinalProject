@@ -59,15 +59,28 @@ if __name__ == '__main__':
     motor1 = MotorDriver2(input1Pin, input2Pin, enablePin, motorTimer, motorChannel)
     servo = Servo(servoPin, servoTim, servoCh)
     
+    level = 0
+    old_level = 0
+    
     while 1:
         level = int(input("Level: "))
-        for i in range(level):
-            motor1.set_duty_cycle(i)
-            pyb.delay(500)
-            print(i)
+        i = old_level
+        if level > old_level:
+            while i <= level:
+                motor1.set_duty_cycle(i)
+                pyb.delay(250)
+                print(i)
+                i = i+1
+        if level < old_level:
+            while i >= level:
+                motor1.set_duty_cycle(i)
+                pyb.delay(250)
+                print(i)
+                i = i-1 
+        old_level = level
         rounds = int(input("rounds: "))
         servo.magDump(rounds)        
-        motor1.set_duty_cycle(0)
+        
     
     
         

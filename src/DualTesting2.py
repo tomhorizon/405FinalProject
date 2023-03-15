@@ -79,8 +79,20 @@ LED = FireLED(LEDpin, LEDtimer, LEDchannel)
 alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
 flywheel.set_duty_cycle(0)
 
+
+KP1 = .009
+KI1 = .021
+KD1 = .01
+
+KP2 = .008
+KI2 = .015
+KD2 = .03
+
 def initialize():
     print("Booting up...")
+    encoder1.zero()
+    encoder2.zero()
+    
     alarm.powerUp()
     LED.powerUp()
     
@@ -91,113 +103,102 @@ def initialize():
     pyb.delay(500)
     flywheel.set_duty_cycle(0)
     
-    motor1.set_duty_cycle(-25)
-    pyb.delay(250)
-    motor1.set_duty_cycle(25)
-    pyb.delay(250)
+    motor1.set_duty_cycle(-35)
+    pyb.delay(200)
+    motor1.set_duty_cycle(35)
+    pyb.delay(200)
     motor1.set_duty_cycle(0)
     pyb.delay(100)
     
     motor2.set_duty_cycle(-25)
-    pyb.delay(250)
+    pyb.delay(150)
     motor2.set_duty_cycle(25)
-    pyb.delay(175)
+    pyb.delay(100)
     motor2.set_duty_cycle(0)
     pyb.delay(100)
     
     print("Shakedown complete.")
+    flywheel.set_duty_cycle(5)
     
 def dual():
-    initTime = time.ticks_ms()
-    try:
-        from pyb import info
-    # Oops, it's not an STM32; assume generic machine.I2C for ESP32 and others
-    except ImportError:
-        # For ESP32 38-pin cheapo board from NodeMCU, KeeYees, etc.
-        i2c_bus = I2C(1, scl=Pin(22), sda=Pin(21))
-    # OK, we do have an STM32, so just use the default pin assignments for I2C1
-    else:
-        i2c_bus = I2C(2)    # Keep this at 2 - had to change some pins around, i2c2 works
-    # Select MLX90640 camera I2C address, normally 0x33, and check the bus
-    i2c_address = 0x33
-    scanhex = [f"0x{addr:X}" for addr in i2c_bus.scan()]
-    gc.collect()
-    camera = MLX_Cam(i2c_bus)
-    gc.collect()
-    
+    master_timer = time.ticks_ms()
+    track_yaw = 0
     encoder1.zero()
     encoder2.zero()
     
-    #change pain level here  (x / 100)
-    flywheel.set_duty_cycle(18)
-    
-    KP1 = .008
-    KI1 = .01
-    KD1 = .0
-    
-    KP2 = .008
-    KI2 = .015
-    KD2 = .03
-    
-#     setPoint1 = -6400
-    setPoint1 = 0 # just testing on my desk an don't want it rotating lol
-    setPoint2 = 0
-     
+    initTime = time.ticks_ms()
+    i2c_bus = I2C(2) 
+    i2c_address = 0x33
+    camera = MLX_Cam(i2c_bus)
+    print("Power On")
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
-    gc.collect()
-    print("Power On")
-    psi1 = 101
-    elapsed = 0
     LED.hunt()
-    startTime = time.ticks_ms()
-#     control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
-#     control2 = Control2(KP2, KI2, KD2, setPoint2 + 32768)
-#     pyb.delay(5)
-#     while (elapsed < 3000):
-#         elapsed = time.ticks_ms() - startTime
-#         pos1 = encoder1.read()
-#         pos2 = encoder2.read()
-#         
-#         psi1 = control1.run(pos1)
-#         motor1.set_duty_cycle(psi1)
-#         pyb.delay(5)
-#         
-#         psi2 = control2.run(pos2)
-#         motor2.set_duty_cycle(-psi2)
-#         pyb.delay(5)
     
+    #changepain level here  (x / 100)
+    flywheel.set_duty_cycle(5)
+
+    # rotate 180 - seems to be around 7000
+    # positive yaw: CCW
+    # positive pitch: DOWN
+    setPoint1 = 6300 # just testing on my desk an don't want it rotating lol
+    setPoint2 = 0
+    
+    track_yaw = track_yaw + setPoint1
+    
+    psi1 = 101
+    control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
+    pyb.delay(5)
+    elapsed = 0
+    start = time.ticks_ms()
+    while (elapsed < 1500):
+        elapsed = time.ticks_ms() - start
+        pos1 = encoder1.read()
+        psi1 = control1.run(pos1)
+        motor1.set_duty_cycle(-psi1)
+        pyb.delay(5)
+        print(psi1)
+        #psi1 = 0
+        
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     xrange = [6, 26]
     gc.collect()
     yaw_sum = 0
     pitch_sum = 0
-    print(f"Elapsed: {time.ticks_ms() - initTime}")
-    #while ((time.ticks_ms() - initTime) < 5000):
     
+    #change pain level here  (x / 100)
+    flywheel.set_duty_cycle(20)
+    pyb.delay(2000)
     
+    elapsed = 0
+    while elapsed < 5000:
+        elapsed = time.ticks_ms() - master_timer
+        pyb.delay(3)
+    
+    print("Click")
     image = camera.get_image()
+    print("Image received")
+    
     camera.ascii_art(image)
     Yaw_error, Pitch_error = camera.target_alg(xrange)
     setPoint1 = Yaw_error*61
     setPoint2 = Pitch_error*61
     
+    track_yaw = track_yaw + setPoint1
+
     print(f"Yaw_e = {Yaw_error}, Pitch_e = {Pitch_error}")
     encoder1.zero()
     encoder2.zero()
-    elapsed = 0
-    startTime = time.ticks_ms()
     
-#     psi2 = 51
-#     while (abs(psi2) > 2):
-
+    elapsed = 0
+    psi1 = 101
     control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
     control2 = Control2(KP2, KI2, KD2, setPoint2 + 32768)
     pyb.delay(5)
-    while (elapsed < 1200):
-        elapsed = time.ticks_ms() - startTime
-        
+    start = time.ticks_ms()
+    while (elapsed < 250):
+        elapsed = time.ticks_ms() - start
         pos1 = encoder1.read()
         pos2 = encoder2.read()
         
@@ -207,21 +208,40 @@ def dual():
         motor1.set_duty_cycle(-psi1)
         motor2.set_duty_cycle(psi2)
         
-        alarm.beep(psi1)
+        alarm.beep(abs(psi1))
         pyb.delay(5)
+        print(psi1)
+        #psi1 = 0
         
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
-    pyb.delay(20)
-    alarm.off()
-    LED.on()
-    pyb.delay(20)
-    servo.magDump(3)
-    pyb.delay(20)
-    LED.on()
-    flywheel.set_duty_cycle(0)
+    servo.magDump(1)
     
+    LED.on()
+    alarm.off()
+    flywheel.set_duty_cycle(3)
     print("Target Engaged")
+    
+    
+    encoder1.zero()
+    encoder2.zero()
+    
+    control1 = Control2(KP1, KI1, KD1, -track_yaw + 32768)
+    pyb.delay(5)
+    elapsed = 0
+    start = time.ticks_ms()
+    while (elapsed < 1500):
+        elapsed = time.ticks_ms() - start
+        pos1 = encoder1.read()
+        psi1 = control1.run(pos1)
+        motor1.set_duty_cycle(-psi1)
+        pyb.delay(5)
+        print(psi1)
+        #psi1 = 0
+        
+    motor1.set_duty_cycle(0)
+    motor2.set_duty_cycle(0)
+
     
 if __name__ == "__main__":
     initialize()

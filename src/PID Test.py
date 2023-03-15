@@ -34,30 +34,39 @@ motor2 = MotorDriver2(motor2Pin1, motor2Pin2, motor2Ena, motor2Tim, motor2Ch1)
 encoder1 = EncoderReader(encoder1Pin1, encoder1Pin2, encoder1Tim, encoder1Ch1, encoder1Ch2)
 encoder2 = EncoderReader(encoder2Pin1, encoder2Pin2, encoder2Tim, encoder2Ch1, encoder2Ch2)
 
+motor1.set_duty_cycle(0)
+motor2.set_duty_cycle(0)
+
 def loop(setPoint1, setPoint2):
+    motor1.set_duty_cycle(0)
+    motor2.set_duty_cycle(0)
+    
     #setPoint1 = int(input("SP1:"))
     #setPoint2 = int(input("SP2:"))
     #entry = input("Hit Enter after power is on")
     
     KP1 = .008
     KI1 = .01
-    KD1 = .0
+    KD1 = .01
     
     KP2 = .008
     KI2 = .015
     KD2 = .03
     
-    motor1.set_duty_cycle(0)
-    motor2.set_duty_cycle(0)
     encoder1.zero()
     encoder2.zero()
+    
+    elapsed = 0
+    startTime = time.ticks_ms()
+    psi1 = 100
     
     control1 = Control2(KP1, KI1, KD1, setPoint1 + 32768)
     control2 = Control2(KP2, KI2, KD2, setPoint2 + 32768)
     pyb.delay(5)
+    
+    start = time.ticks_ms()
     elapsed = 0
-    startTime = time.ticks_ms()
-    while (elapsed < 1000):
+    while (elapsed < 900):
         elapsed = time.ticks_ms() - startTime
         pos1 = encoder1.read()
         pos2 = encoder2.read()
@@ -70,6 +79,8 @@ def loop(setPoint1, setPoint2):
         
         pyb.delay(5)
         
+    print(psi1)
+    print(elapsed)
     motor1.set_duty_cycle(0)
     motor2.set_duty_cycle(0)
     
@@ -78,11 +89,10 @@ def loop(setPoint1, setPoint2):
 if __name__ == "__main__":
     entry = input("enter")
     while 1:
-        print("Positive Values")
-        loop(3000, 120)
-        pyb.delay(500)
-        
-        print("Negative Values")
-        loop(-3000, -120)
+        y = input("Yaw: ")
+        p = input("Pitch: ")
+        yaw = int(y)
+        pitch = int(p)
+        loop(yaw, pitch)
         pyb.delay(500)
     
