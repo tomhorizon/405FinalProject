@@ -16,7 +16,7 @@ class Buzzer:
             
     def numBeep(self, n):
         self.ch1.pulse_width_percent(50)
-        pyb.delay(100*n)
+        pyb.delay(125*n)
         self.ch1.pulse_width_percent(0)
             
     def powerUp(self):

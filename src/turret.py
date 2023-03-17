@@ -3,9 +3,22 @@ from control2 import Control2
 import utime as time
 
 class Turret:
-#     """! @brief Turret class creates and carries out all of the functios of a heat-seekign nerf turret.
-#     """
+    """! @brief Turret class creates and carries out all of the functios of a heat-seekign nerf turret.
+    """
     def __init__(self, yawMotor, pitchMotor, yawEncoder, pitchEncoder, flywheel, servo, LED, alarm, camera, goButton):
+        """! The initialization sets the attributes for a turret object
+        @param yawMotor: Motor that controls the yaw axis, object of MotorDriver2 class
+        @param pitchMotor: Motor that controls the pitch axis, object of MotorDriver2 class
+        @param yawEncoder: The turret uses an encoder from class EncoderDriver to read yaw position
+        @param pitchEncoder: The turret uses an encoder from class pitchEncoder to read pitch position
+        @param flywheel: The turret uses flywheels from class MotorDriver 2 to propel darts
+        @param servo: The turret uses a servo to control the firing pin from class Servo
+        @param LED: The turret uses LED's to communicate psi values and turret mode
+        @param alarm: The turret uses an alarm to communicate with user and to communicate activity
+        @param camera: The turret uses an IR camera of class MLX_Cam to find a target
+        @param goButton: The turret uses a limit switch as the main source of user input
+        """
+
         self.yawMotor = yawMotor
         self.pitchMotor = pitchMotor
         self.yawEncoder = yawEncoder
@@ -28,6 +41,8 @@ class Turret:
         self.KD2 = .03
         
     def wakeUp(self):
+        """! The turret powers on, checks for safety, and actuates each motor (shakedown) to ensure proper function
+        """
         print("Booting up...")
         self.yawEncoder.zero()
         self.pitchEncoder.zero()
@@ -65,6 +80,8 @@ class Turret:
         self.flywheel.set_duty_cycle(5)
     
     def yaw180(self):
+        """! The turret rotates 180 degrees clockwise around its yaw axis
+        """
         self.track_yaw = 0
         self.yawEncoder.zero()
         self.pitchEncoder.zero()
@@ -98,11 +115,16 @@ class Turret:
         self.pitchMotor.set_duty_cycle(0)
         
     def findTarget(self, xrange):
+        """! The turret uses the camera to capture an image and find a target to be aimed at
+        @param xrange: contains the minimum and maximum indexes of columns to search (can range from 1 --> 31)
+        """
         image = self.camera.get_image()
         self.camera.ascii_art(image)
         self.yawError, self.pitchError = self.camera.target_alg(xrange)
     
     def aim(self):
+        """! The turret uses the yaw and pitch errors and their respective motors to aim at the selected target
+        """
         setPoint1 = self.yawError*61
         if self.yawError >= 0:
             setPoint1 = setPoint1 - 150
@@ -142,6 +164,9 @@ class Turret:
         self.pitchMotor.set_duty_cycle(0)
         
     def fire(self, n):
+        """! The turret fires a specified number of rounds at the target
+        @param n: number of rounds to be fired
+        """
         self.servo.magDump(n)
         self.LED.on()
         self.alarm.off()
@@ -149,6 +174,8 @@ class Turret:
         print("Target Engaged")
         
     def sleep(self):
+        """! The turret resets to its home position and lowers flywheel duty cycle to a safer speed
+        """
         self.yawEncoder.zero()
         self.pitchEncoder.zero()
         
