@@ -42,13 +42,10 @@ while True:
         else:
             valY = -100
     if abs(valX) < 5:
-         valX = 0
+        valX = 0
     if abs(valY) < 5:
         valY = 0
     
     print(f"X: {valX}\t Y: {valY}")
     motor1.set_duty_cycle(valX)
-    pyb.delay(5)
-    motor2.set_duty_cycle(-jj
-                          valY)
-    pyb.delay(5)
+    motor2.set_duty_cycle(-valY)
