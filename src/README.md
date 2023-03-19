@@ -68,6 +68,11 @@ A brief discussion of what you've learned about the project and recommendations 
 
 
 **Links**
+Compilation of duels conducted during on champsionship day (3/17/2023):
+https://youtu.be/L2fNEF87ndI
+
+Close-up view of turret during a duel:
+https://youtu.be/JrsSzEOzaZ4
 
 **docugen**
 
