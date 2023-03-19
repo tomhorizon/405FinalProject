@@ -32,6 +32,7 @@ buzzerTimer = 1
 buzzerChannel = 2
 
 goButtonPin = pyb.Pin.board.PA15
+
 LEDpin = pyb.Pin.board.PA8
 LEDtimer = 1
 LEDchannel = 1
@@ -43,7 +44,6 @@ servo = Servo(servoPin, servoTim, servoCh)
 LED = FireLED(LEDpin, LEDtimer, LEDchannel)
 alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
 goButton = GoButton(goButtonPin)
-
 
 motor1.set_duty_cycle(0)
 motor2.set_duty_cycle(0)
@@ -57,6 +57,7 @@ switchOld = 0
 alarm.numBeep(3)
 
 while True:
+    # read joystick values and scale, saturate
     valX = (dirX.read() - 2015)/20
     valY = (dirY.read() - 2040)/20
     if abs(valX) > 100:
@@ -73,20 +74,22 @@ while True:
         valX = 0
     if abs(valY) < 5:
         valY = 0
-    
+
+    # set motor values
     print(f"X: {valX}\t Y: {valY}")
     motor1.set_duty_cycle(valX)
     pyb.delay(5)
     motor2.set_duty_cycle(-valY)
     pyb.delay(5)
-    
-    
+
+    # read bush button and determine if it has changed
     switchNew = goButton.value()
     pyb.delay(5)
-    print(switchNew)
-    
+    # print(switchNew)
+
+    # engage or disengage firing servo as needed
     if switchNew != switchOld:
-        print(switchNew)
+        #print(switchNew)
         if switchNew == 1:
             servo.engage()
             LED.hunt()
