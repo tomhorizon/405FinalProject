@@ -3,6 +3,7 @@ from motor_driver2 import MotorDriver2
 from Servo import Servo
 from fireLED import FireLED
 from buzzer import Buzzer
+from goButton import GoButton
 
 motor1Pin1 = pyb.Pin.board.PB5
 motor1Pin2 = pyb.Pin.board.PA10
@@ -30,6 +31,7 @@ buzzerPin = pyb.Pin.board.PA9
 buzzerTimer = 1
 buzzerChannel = 2
 
+goButtonPin = pyb.Pin.board.PA15
 LEDpin = pyb.Pin.board.PA8
 LEDtimer = 1
 LEDchannel = 1
@@ -40,6 +42,8 @@ flywheel = MotorDriver2(flywheelPin1, flywheelPin2, flywheelEna, flywheelTim, fl
 servo = Servo(servoPin, servoTim, servoCh)
 LED = FireLED(LEDpin, LEDtimer, LEDchannel)
 alarm = Buzzer(buzzerPin, buzzerTimer, buzzerChannel)
+goButton = GoButton(goButtonPin)
+
 
 motor1.set_duty_cycle(0)
 motor2.set_duty_cycle(0)
@@ -48,12 +52,9 @@ LED.on()
 
 dirX = pyb.ADC(pyb.Pin.board.PC3)
 dirY = pyb.ADC(pyb.Pin.board.PC0)
-switch = pyb.Pin(pyb.Pin.board.PC2, pyb.Pin.PULL_DOWN)
-switchOld = 0
 
+switchOld = 0
 alarm.numBeep(3)
-while switch.value == 0:
-    pyb.delay(10)
 
 while True:
     valX = (dirX.read() - 2015)/20
@@ -73,12 +74,19 @@ while True:
     if abs(valY) < 5:
         valY = 0
     
-    #print(f"X: {valX}\t Y: {valY}")
+    print(f"X: {valX}\t Y: {valY}")
     motor1.set_duty_cycle(valX)
+    pyb.delay(5)
     motor2.set_duty_cycle(-valY)
-
-    switchNew = switch.value()
+    pyb.delay(5)
+    
+    
+    switchNew = goButton.value()
+    pyb.delay(5)
+    print(switchNew)
+    
     if switchNew != switchOld:
+        print(switchNew)
         if switchNew == 1:
             servo.engage()
             LED.hunt()
@@ -88,5 +96,6 @@ while True:
             servo.disengage()
             LED.on()
             alarm.off()
+            
     switchOld = switchNew
 
