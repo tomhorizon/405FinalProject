@@ -1,4 +1,48 @@
-# Third Dual Testing File
+"""!
+@file lab3main.py
+
+This file is for ME 405's final project demonstration, in which two competing teams carry out a duel between
+heat-seaking Nerf turrets. A heat-seaking nerf turret uses an MLX90640 infrared camera to find a target based
+off its heat signature, two motors to control the yaw and pitch of the turret, two constantly-spinning flywheel
+motors to launch the darts, a servo to actuate the firing pin, and a set of LED's and a beeper for human interaction.
+
+<b>Yaw-Axis:<b> The yaw axis is controlled by a 50:1 metal, geared-down, encoded, 24V DC brushed motor with a maximum RPM
+of 200. This motor uses a timing pulley system at a 4:1 gear ratio to control the lateral aim of the turret. A Kyuionty L298
+DC Motor Driver is used to control the motor through pulse-width modification. The yaw motor is initialized as an object of
+class MotorDriver2 and controlled using PID control in class Control2 to act as a servo.
+
+<b>Pitch-Axis:<b> The pitch axis is configured similarly to the yaw-axis. It is controlled by a 50:1 metal, geared-down, encoded,
+24V DC brushed motor with a macimum RPM of 200. The motor uses a pulley timing system with a 4:1 gear ratio to control the
+vertical aim of the turret. The pitch motor is initialized as an object of class MotorDriver2 and controlled using PID control
+to act as a servo.
+
+<b>Motor Control:<b> Both the yaw and pitch motors are controled using PID control to act as positional servos. PID control stands
+for proportional, integral, and derivataive control, and is used to modify the response of a motor. Proportional control is the
+simplest form of motor control. It calculates the system error ("goal" encoder value - actual encoder value) and multiplies it
+by a constant, Kp, to modify how much effort the motor applies to reach its goal. Integral control is used to modify the steady-state
+condition of the motor and to eliminate steady state error. It involves continuously summing the error and dividing it by the change
+in time, and using that value to adjust the control inputs. As time goes on, the effect of integral control increases. Derivative
+control uses the rate of change of the error to adjust the system's control inputs. It is best used to control the transient
+response of a system, which is when the error's rate of change is the highest. Using PID control allows the turret to respond more
+quickly and accurately, imrpoving the aim and speed of the system.
+
+<b>Flywheels:<b>
+
+<b>Servo:<b>
+
+<b>Buzzer/LED's:<b>
+
+<b>MLX90640 IR Camera:<b>
+
+<b>Duel Proceedings:<b>
+
+
+@author Tom Taylor
+@author Jonathan Fraser
+@author Dylan Weiglein
+
+@date   2023-3-16
+"""
 import pyb
 import utime as time
 import gc

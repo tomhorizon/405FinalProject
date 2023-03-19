@@ -80,7 +80,7 @@ class Turret:
         self.flywheel.set_duty_cycle(5)
     
     def yaw180(self):
-        """! The turret rotates 180 degrees clockwise around its yaw axis
+        """! The turret rotates 180 degrees counter-clockwise around its yaw axis
         """
         self.track_yaw = 0
         self.yawEncoder.zero()

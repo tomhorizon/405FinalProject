@@ -1,8 +1,8 @@
 import utime as time
 
 class Control2:
-    """! @brief The Control class carries out the the calculations for a proportional controller based off of Kp, the proportional
-        controller constant, the set point (goal), and the current position
+    """! @brief The Control class carries out the the calculations for a PID controller based off of Kp, Ki, and Kd,
+    and the set point (goal), and the current position
     """
     def __init__(self, kp, ki, kd, setpt):
         self.kp = kp
@@ -14,14 +14,22 @@ class Control2:
         self.error_prev = 0
         self.t_prev = time.ticks_ms()
         """! Initialization takes in the controller parameters and intiallizes the controller object
-        @param kp: Kp is the controller constant (must range from 0 --> 4 for this application)
+        @param kp: Kp is the proportional controller constant (must range from 0 --> 4 for this application)
+        @param ki: Ki is the integral controller constant
+        @param kd: Kd is the derivative controller constant
         @param setpt: setpt is the setpoint, or the encoder value for the "goal" position of the motor
         """
 
     def run(self, pos):
+        """! The run method takes in the current motor position and calculates and scales the error to ouput the
+            necessary motor effort for a PID controller.
+        @param pos: pos is the current motor position as read by the encoder
+        """
+        # Calculate positional error
         self.error = self.setpt - pos
         self.t = time.ticks_ms()
         
+        # Perform PID control and configure P,I, and D outputs
         self.psiP = self.kp*self.error
         self.psiI = self.I + self.ki*self.error*(self.t - self.t_prev)
         self.psiD = self.kd*(self.error - self.error_prev)/(self.t - self.t_prev)
@@ -34,10 +42,7 @@ class Control2:
         
         
         return self.psi
-        """! The run method takes in the current motor position and calculates and scales the error to ouput the
-            necessary motor effort.
-        @param pos: pos is the current motor position as read by the encoder
-        """
+        
 
     def set_setpoint(self, setpt_new):
         """! set_setpoint takes in the new setpoint, or goal position, of the motor and applies it to the controller object
