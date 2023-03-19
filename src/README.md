@@ -1,5 +1,7 @@
 Overview - Learn by Dueling
 
+![Figure 0: Early concept art of the turret (Fusion 360).](/imgInitialRender.png)
+
 This project was a showcase of all programming and hardware skills acquired over the last two quarters of our Mechatronics education. The goal of the project was to integrate motor control, sensors, communication protocols, and inspire creativity with an open-ended design.
 
 The competition goal was to create a machine that uses a thermal camera to direct a nerf dart to an opponent in the shortest amount of time. The rules were simple - each time has five seconds to rotate their machine from rear facing to front facing, acquire a target, and ten seconds to fire. The first time to land a hit scored three points, the second team to hit scored one point, any misses subtracted a point, and any subsequent hits did not affect the score.
@@ -17,7 +19,7 @@ The base of the machine is an 8" lazy Susan ball bearing unit. It is bolted to a
 
 To add to the overall aesthetic of the design, a 3.3-24V alarm and three 5V pre-resisted red LEDs alert to the opponent of their approaching fate. 
 
-![Figure 1: Full system render (Fusion 360).](/imgFullTurret.png)
+![Figure 1: Final system render.](/imgFullTurret.png)
 
 ![Figure 2: Motors and gear system.](/imgMotorsAndGearing.png)
 
