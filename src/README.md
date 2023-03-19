@@ -1,4 +1,4 @@
-Overview - Learn by Dueling
+**Overview - Learn by Dueling**
 
 ![Figure 0: Early concept art of the turret (Fusion 360).](/imgInitialRender.png)
 
@@ -9,7 +9,7 @@ The competition goal was to create a machine that uses a thermal camera to direc
 This exercise is an early study on the possibility of targetting embers falling through the sky and precisely extinguishing them before they have a chance to cause further wildfire damage. In theory, a network of these machines that use thermal data for targetting can prevent the spread of fires.
 
 
-Mechanical Hardware
+**Mechanical Hardware**
 
 The machine is actuated by two 200rpm 24v encoded motors to control rotation and pitch. With an internal gearing of 50:1 and an external gearing of 4:1, the machine is able to rotate about either axis at 1 revolution per second. Two 24v 12,000rpm motors with 5" diameter flywheels enthusiastically send darts down a lightweight 12" aluminum barrel. A maximum of 12 Nerf Accustrike darts are fed from a factory magazine, which are pushed between the flywheels by a 25kg 180deg hobby servo linked by pin and slot mechanism to a custom machined 3/8" firing rod. A custom 3D printed receiver supports the magazine, firing rod, and rear of the barrel.
 
@@ -28,7 +28,7 @@ To add to the overall aesthetic of the design, a 3.3-24V alarm and three 5V pre-
 ![Figure 4: Rear firing group assembly.](/imgRearFiringGroup.png)
 
 
-Electronic Hardware
+**Electronic Hardware**
 
 All electronics are secured to a custom 3D printed electronics control box. They are powered by a 24V 15A power supply with an emergency stop and 15A fuse. This is stepped down to provide 7.9V to the hobby servo and 5V to the control logic, encoders, and LEDs. 
 
@@ -39,7 +39,7 @@ The 24V motors are powered by two Dual L298 DC Motor drivers. A limit switch on 
 ![Figure 6: Wiring diagram.](/imgWiringDiagram.png)
 
 
-Software
+**Software**
 
 An overview of the software design. This should be brief and general, with a link to your Doxygen pages -- the pages describe the details of the software, so there's no need to repeat that here.
 
@@ -48,7 +48,7 @@ An overview of the software design. This should be brief and general, with a lin
 ![Figure 7: Nucleo pinout.](/imgPinout.png)
 
 
-Results
+**Results**
 
 A discussion of the results.  How did you test your system?  How well has your system performed in these tests?
 
@@ -60,14 +60,14 @@ A discussion of the results.  How did you test your system?  How well has your s
 
 ![Figure 10: Topdown view.](/imgRealTopDown.jpeg)
 
-Takeaways
+**Takeaways**
 
 A brief discussion of what you've learned about the project and recommendations for anyone who would like to build upon your work. This does not mean a discussion of what you learned about mechatronics in general; that belongs in other places.  It is a discussion of what worked well and what didn't for this device.
 
 **dylan and jonathan**
 
 
-Links
+**Links**
 
 **docugen**
 
