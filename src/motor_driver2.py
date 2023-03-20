@@ -1,10 +1,11 @@
 import pyb
 
-## IF YOU ARE PLANNING ON TESTING MOTORS, UNPLUG THE ONES NOT USED
+# IF YOU ARE PLANNING ON TESTING MOTORS, UNPLUG THE ONES NOT USED
 
 class MotorDriver2:
-    """! @brief The DC motor is powered by an external 12V supply. The STM32
-    provides a PWM signal that is then turned into -12 to +12V.
+    """!
+    @brief   The DC motor is powered by an external 12V supply. The STM32 provides a PWM
+             signal that is then turned into -12 to +12V.
     """
     def __init__(self, in1, in2, en_pin, timer_num, timerCh1):
         """! The initialization sets up the output pins and PWM channel.
@@ -33,15 +34,11 @@ class MotorDriver2:
             self.ch1.pulse_width_percent(self.level)
             self.in1pin.value(1)
             self.in2pin.value(0)
-            #print("neg input")
         else:
             self.level = input
             self.ch1.pulse_width_percent(self.level)
             self.in1pin.value(0)
             self.in2pin.value(1)
-            #print("pos input")
-            #print(f"Setting duty cycle to {level}")
-
 
 if __name__ == '__main__':
     import time

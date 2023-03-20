@@ -26,17 +26,11 @@ class EncoderReader:
         encoder signal. Limited by 16 bits, the encoder will overflow back
         to zero or, if moving backwards, underflow to the max value
         again.
+        
+        @returns counter: returns encoder value
         """
         counter = self.timer.counter()
-#         if counter > self.old_count + 32000:
-#             self.position = self.position + counter
-#             #print('+')
-#         elif counter < self.old_count - 32000:
-#             self.position = self.position - counter
-#             #print('-')
-#         self.old_count = counter
-#         #print(self.position)
-#         return self.position
+
         return counter
 
     def zero(self):
