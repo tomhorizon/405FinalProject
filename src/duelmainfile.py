@@ -1,5 +1,5 @@
 """!
-@file DuelMainFile.py
+@file duelmainfile.py
 
 This file is for ME 405's final project demonstration, in which two competing teams carry out a duel between
 heat-seaking Nerf turrets. The goal of a duel is to be the first to hit an opposing target, without missing a shot (penalty).
