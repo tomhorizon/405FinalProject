@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ME 405 Final Project: README</title>
+<title>ME 405 Final Project: Overview - Learn by Dueling</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -91,31 +91,26 @@ $(document).ready(function(){initNavTree('md__c___users_phlip__one_drive____cal_
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">README </div></div>
+  <div class="headertitle"><div class="title">Overview - Learn by Dueling </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><b>Overview - Learn by Dueling</b></p>
-<div class="image">
+<div class="textblock"><div class="image">
 <img src="imgInitialRender.png" alt=""/>
 <div class="caption">
 Figure 0: Early concept art of the turret (Fusion 360).</div></div>
     <p>This project was a showcase of all programming and hardware skills acquired over the last two quarters of our Mechatronics education. The goal of the project was to integrate motor control, sensors, communication protocols, and inspire creativity with an open-ended design.</p>
 <p>The competition goal was to create a machine that uses a thermal camera to direct a nerf dart to an opponent in the shortest amount of time. The rules were simple - each time has five seconds to rotate their machine from rear facing to front facing, acquire a target, and ten seconds to fire. The first team to land a hit scored three points, the second team to hit scored one point, any misses subtracted a point, and any subsequent hits did not affect the score.</p>
 <p>This exercise is an early study on the possibility of targetting embers falling through the sky and precisely extinguishing them before they have a chance to cause further wildfire damage. In theory, a network of these machines that use thermal data for targetting can prevent the spread of fires.</p>
-<p><b>Mechanical Hardware</b></p>
-<p>The machine is actuated by two 200rpm 24v encoded motors to control rotation and pitch. With an internal gearing of 50:1 and an external gearing of 4:1, the machine is able to rotate about either axis at 1 revolution per second. Two 24v 12,000rpm motors with 5" diameter flywheels enthusiastically send darts down a lightweight 12" aluminum barrel. A maximum of 12 Nerf Accustrike darts are fed from a factory magazine, which are pushed between the flywheels by a 25kg 180deg hobby servo linked by pin and slot mechanism to a custom machined 3/8" firing rod. A custom 3D printed receiver supports the magazine, firing rod, and rear of the barrel.
-
-The support structure is a combination of laser cut 12g steel and 3D printed pivot mechanisms. All pivots are supported by 1/4" steel D shaft on bearings pressed into place. Heatset inserts were used extensively in the 3D printed parts in M3 and M4 sizes to fassten parts.</p>
-<p>The base of the machine is an 8" lazy Susan ball bearing unit. It is bolted to a bespoke wooden base with adequate clearance for the yaw gearing. This is further supported by a brake disc to prevent slipping and under-rotation of the turret. To add to the overall aesthetic of the design, a 3.3-24V alarm and three 5V pre-resisted red LEDs alert to the opponent of their approaching fate.
-
-
-doxygen is great!
-
-
-
-
-@image html /imgFullTurret2.png "Figure 1: Final system render."    </p>
+<h1><a class="anchor" id="autotoc_md1"></a>
+Hardware</h1>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Mechanical</h2>
+<p>The machine is actuated by two 200rpm 24v encoded motors to control rotation and pitch. With an internal gearing of 50:1 and an external gearing of 4:1, the machine is able to rotate about either axis at 1 revolution per second. Two 24v 12,000rpm motors with 5" diameter flywheels enthusiastically send darts down a lightweight 12" aluminum barrel. A maximum of 12 Nerf Accustrike darts are fed from a factory magazine, which are pushed into the path of the flywheels by a 25kg 180deg hobby servo linked by pin and slot mechanism to a custom machined 3/8" firing rod. A custom 3D printed receiver supports the magazine, firing rod, and rear of the barrel. The support structure is a combination of laser cut 12g steel and 3D printed pivot mechanisms. The base of the machine rotates on an 8" lazy Susan ball bearing unit. It is bolted to a bespoke wooden base with adequate clearance for the yaw gearing. This is further supported by a brake disc to prevent slipping and under-rotation of the turret. To add to the overall aesthetic of the design, a 3.3-24V alarm and three 5V pre-resisted red LEDs alert to the opponent of their approaching fate.</p>
 <div class="image">
+<img src="imgFullTurret2.png" alt=""/>
+<div class="caption">
+Figure 1: Final system render.</div></div>
+    <div class="image">
 <img src="imgMotorsAndGearing.png" alt=""/>
 <div class="caption">
 Figure 2: Motors and gear system.</div></div>
@@ -127,7 +122,8 @@ Figure 3: Front firing group assembly.</div></div>
 <img src="imgRearFiringGroup.png" alt=""/>
 <div class="caption">
 Figure 4: Rear firing group assembly.</div></div>
-    <p><b>Electronic Hardware</b></p>
+    <h2><a class="anchor" id="autotoc_md3"></a>
+Electronics</h2>
 <p>All electronics are secured to a custom 3D printed electronics control box. They are powered by a 24V 15A power supply with an emergency stop and 15A fuse. This is stepped down to provide 7.9V to the hobby servo and 5V to the control logic, encoders, and LEDs.</p>
 <p>The 24V motors are powered by two Dual L298 DC Motor drivers. A limit switch on a tether is used as a "start" button to signal the machine to start a new round. A Melexis MLX90640 thermal camera mounted to the barrel provides machine vision.</p>
 <div class="image">
@@ -138,14 +134,16 @@ Figure 5: Control box rendering.</div></div>
 <img src="imgWiringDiagram.png" alt=""/>
 <div class="caption">
 Figure 6: Wiring diagram.</div></div>
-    <p><b>Software</b></p>
+    <h1><a class="anchor" id="autotoc_md4"></a>
+Software</h1>
 <p>An overview of the software design. This should be brief and general, with a link to your Doxygen pages &ndash; the pages describe the details of the software, so there's no need to repeat that here.</p>
 <p><b>dylan and jonathan</b></p>
 <div class="image">
 <img src="imgPinout.png" alt=""/>
 <div class="caption">
 Figure 7: Nucleo pinout.</div></div>
-    <p><b>Results</b></p>
+    <h1><a class="anchor" id="autotoc_md5"></a>
+Results</h1>
 <p>A discussion of the results. How did you test your system? How well has your system performed in these tests?</p>
 <p><b>dylan and jonathan</b></p>
 <div class="image">
@@ -160,10 +158,13 @@ Figure 9: Front view.</div></div>
 <img src="imgRealTopDown.jpg" alt=""/>
 <div class="caption">
 Figure 10: Topdown view.</div></div>
-    <p><b>Takeaways</b></p>
+    <h2><a class="anchor" id="autotoc_md6"></a>
+Takeaways</h2>
 <p>A brief discussion of what you've learned about the project and recommendations for anyone who would like to build upon your work. This does not mean a discussion of what you learned about mechatronics in general; that belongs in other places. It is a discussion of what worked well and what didn't for this device.</p>
 <p><b>dylan and jonathan</b></p>
-<p><b>Links</b> Compilation of duels conducted during on championship day (3/17/2023): <a href="https://youtu.be/L2fNEF87ndI">https://youtu.be/L2fNEF87ndI</a></p>
+<h1><a class="anchor" id="autotoc_md7"></a>
+Links</h1>
+<p>Compilation of duels conducted during on championship day (3/17/2023): <a href="https://youtu.be/L2fNEF87ndI">https://youtu.be/L2fNEF87ndI</a></p>
 <p>Close-up view of turret during a duel: <a href="https://youtu.be/JrsSzEOzaZ4">https://youtu.be/JrsSzEOzaZ4</a></p>
 <p><b>docugen</b></p>
 <p><b>links to all parts in discord</b> </p>
