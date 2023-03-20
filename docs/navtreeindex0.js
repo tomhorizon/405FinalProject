@@ -1,6 +1,5 @@
 var NAVTREEINDEX0 =
 {
-"_duel_main_file_8py.html":[2,0,0,0],
 "annotated.html":[1,0],
 "class_servo_1_1_servo.html":[1,0,6,0],
 "class_servo_1_1_servo.html#a36220e16ac23917e27de0c1fc96e84a6":[1,0,6,0,2],
@@ -45,6 +44,7 @@ var NAVTREEINDEX0 =
 "classturret_1_1_turret.html#acd2058fb5fdff843096402dde900f0b2":[1,0,7,0,6],
 "classturret_1_1_turret.html#af6c247b12f1c4e41f07202f801ec909c":[1,0,7,0,1],
 "dir_68267d1309a1af8e8297ef4c3efbcdba.html":[2,0,0],
+"duelmainfile_8py.html":[2,0,0,0],
 "files.html":[2,0],
 "functions.html":[1,2,0],
 "functions_func.html":[1,2,1],
