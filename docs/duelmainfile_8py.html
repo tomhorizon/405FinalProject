@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>ME 405 Final Project: C:/Users/phlip/OneDrive - Cal Poly/ME 405 Mechatronics/405FinalProject/src/duelmainfile.py File Reference</title>
+<title>ME 405 Final Project: C:/Users/dylan/OneDrive/Documents/GitHub/405FinalProject/src/duelmainfile.py File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -24,7 +24,6 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="WarCrimesLogoSmall.png"/></td>
   <td id="projectalign">
    <div id="projectname">ME 405 Final Project<span id="projectnumber">&#160;0.1.0</span>
    </div>
@@ -263,7 +262,7 @@ list&#160;</td><td class="memItemRight" valign="bottom"><b>duelmainfile.xrange</
 <p><b>Servo:</b> A metal-geared high-torque DC servo is used to control the actuation of the firing pin. Controlling a DC servo is different than controlling a DC motor to act as a servo because the DC servo is already configured to be positionally controlled. PWM duty cycles are sent through the servo's signal wire to control the position of the servo.</p>
 <p><b>Buzzer/LED's:</b> A buzzer is used to allow for better human-turret interaction. Different beep sequences are used to communicate when the turret is waiting for a pushbutton input, when it has received that input, and which mode it is in. LED's are also mounted on the barrel of the turret to communicate in a similar manner.</p>
 <p><b>MLX90640 IR Camera:</b> An MLX90640 Infrared Camera is mounted to the barrel of the turret, and is used to locate a target and return setpoints for the yaw and pitch motors. When the camera takes an image, it returns a 24 x 32 array of values, corresponding to heat signature. Dr. Ridgley provided the mlx_cam driver with functionality to configure the camera via I2C, capture an image, and scale/process the data into a pixel map, an ascii art image, and a csv data file. The camera takes ~400-600 ms to capture an image. Once the image is captured, the data is scaled, and then a target can be found. In general, humans have a higher heat signature than their surroundings in a classroom.</p>
-<p><b>Targeting &amp; Aiming:</b> The targeting algorithm can be found in the file mlx_cam.py in the mlx_raw folder of the directory. The main strategy applied in that algorithm favors targets with a vertical aspect ratio (humans are generally taller than they are wide). The strategy is as follows:</p><ol type="1">
+<p><b>Targeting &amp; Aiming:</b> The targeting algorithm can be found in the file <a class="el" href="mlx__cam_8py.html" title="RAW VERSION This version uses a stripped down MLX90640 driver which produces only raw data,...">mlx_cam.py</a> in the mlx_raw folder of the directory. The main strategy applied in that algorithm favors targets with a vertical aspect ratio (humans are generally taller than they are wide). The strategy is as follows:</p><ol type="1">
 <li>Index through the searchable columns of the 2D pixel array. In each column, sum the square of the pixel value of any pixel that is above a pre-defined threshold. The column with the greatest sum is set as the horizontal position of the target. Having the threshold value and squaring each pixel value before they are added to the sum means that warmer pixels have a higher weight, meaning a column with a few "very hot" pixels will likely have a larger sum than one with many warm pixels. This locates the horizontal center of the person.</li>
 <li>In the column with the highest sum, search for the pixel with the highest value. Multiple pixels on the target in that column may have the same maximum value. The search is conducted vertically (top to bottom), so each pixel value that matches the hottest value overwrites the old one. In general, this will aim for the vertical center of the target.</li>
 </ol>

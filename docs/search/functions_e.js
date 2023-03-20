@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['yaw180_0',['yaw180',['../classturret_1_1_turret.html#acd2058fb5fdff843096402dde900f0b2',1,'turret::Turret']]]
+  ['value_0',['value',['../classgo_button_1_1_go_button.html#a1fc934083c95ef3a40102c04ac9f996d',1,'goButton::GoButton']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['wakeup_0',['wakeUp',['../classturret_1_1_turret.html#a9d8dc64866c9b29d016321c105e3b52b',1,'turret::Turret']]]
+  ['target_5falg_0',['target_alg',['../classmlx__cam_1_1_m_l_x___cam.html#af4ef6f14c8367470eb62715106fe8b0e',1,'mlx_cam::MLX_Cam']]]
 ];

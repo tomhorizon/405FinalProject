@@ -3,7 +3,10 @@ from control2 import Control2
 import utime as time
 
 class Turret:
-    """! @brief Turret class creates and carries out all of the functios of a heat-seekign nerf turret.
+    """!
+    @brief   Turret class creates and carries out all of the functios of a heat-seekign nerf turret.
+    @details The Turret class is designed to control the heat-seaking nerf turret shown in the README file, and is
+             not universally applicable to any similar turret design.
     """
     def __init__(self, yawMotor, pitchMotor, yawEncoder, pitchEncoder, flywheel, servo, LED, alarm, camera, goButton):
         """! The initialization sets the attributes for a turret object
@@ -41,13 +44,13 @@ class Turret:
         self.KD2 = .03
         
     def wakeUp(self):
-        """! The turret powers on, checks for safety, and actuates each motor (shakedown) to ensure proper function
+        """!
+        @brief   The turret powers on, checks for safety, and actuates each motor (shakedown) to ensure proper function
         """
         print("Booting up...")
         self.yawEncoder.zero()
         self.pitchEncoder.zero()
         
-#         self.alarm.powerUp()
         self.LED.powerUp()
         
         print("Enter to start shakedown. Turn on High Voltage Power before continuing.\nEnsure turret is level and safe to rotate.")
@@ -80,7 +83,8 @@ class Turret:
         self.flywheel.set_duty_cycle(5)
     
     def yaw180(self):
-        """! The turret rotates 180 degrees counter-clockwise around its yaw axis
+        """!
+        @brief The turret rotates 180 degrees counter-clockwise around its yaw axis
         """
         self.track_yaw = 0
         self.yawEncoder.zero()
@@ -91,7 +95,7 @@ class Turret:
         
         self.LED.hunt()
         
-        # rotate 180 - seems to be around 7000
+        # rotate 180 - seems to be around 6400
         # positive yaw: CCW
         # positive pitch: DOWN
         setPoint1 = 6400 # just testing on my desk an don't want it rotating lol
@@ -108,14 +112,13 @@ class Turret:
             psi1 = control1.run(pos1)
             self.yawMotor.set_duty_cycle(-psi1)
             pyb.delay(5)
-#             print(psi1)
-            #psi1 = 0
             
         self.yawMotor.set_duty_cycle(0)
         self.pitchMotor.set_duty_cycle(0)
         
     def findTarget(self, xrange):
-        """! The turret uses the camera to capture an image and find a target to be aimed at
+        """!
+        @brief The turret uses the camera to capture an image and find a target to be aimed at
         @param xrange: contains the minimum and maximum indexes of columns to search (can range from 1 --> 31)
         """
         image = self.camera.get_image()
@@ -123,13 +126,18 @@ class Turret:
         self.yawError, self.pitchError = self.camera.target_alg(xrange)
     
     def aim(self):
-        """! The turret uses the yaw and pitch errors and their respective motors to aim at the selected target
+        """!
+        @brief The turret uses the yaw and pitch errors and their respective motors to aim at the selected target
+        
+        @details yawError and pitchError are integers that provide the error in pixels. The unit conversion is as
+                 follows:
+                 32 pixels wide / 55 deg FOV ==> 1 Pixel = 1.7188 degrees
+                 Encoder Resolution = 64 [counts/rev_shaft] * 50 [rev_shaft/rev_actual] * 4 [rev_pulley/rev_actual] * (1/360)[rev_pulley/deg]
+                                    = 35.56 [counts/deg] (w/ 4:1 gear ratio)
+                 error [counts] = error [pixel] * 1.7188 [deg/pix] * 35.56 [count/deg]
+                 error [counts] = 61 * error [pixels]
         """
         setPoint1 = self.yawError*61
-        if self.yawError >= 0:
-            setPoint1 = setPoint1 - 150
-        else:
-            setPoint1 = setPoint1 + 150
         setPoint2 = self.pitchError*61
         
         self.track_yaw = self.track_yaw + setPoint1
@@ -144,6 +152,8 @@ class Turret:
         control2 = Control2(self.KP2, self.KI2, self.KD2, setPoint2 + 32768)
         pyb.delay(5)
         start = time.ticks_ms()
+        
+        # Control loop --> motors have 250 ms to reach the target
         while (elapsed < 250):
             elapsed = time.ticks_ms() - start
             pos1 = self.yawEncoder.read()
@@ -157,14 +167,13 @@ class Turret:
             
             self.alarm.beep(abs(psi1))
             pyb.delay(5)
-#             print(psi1)
-            #psi1 = 0
             
         self.yawMotor.set_duty_cycle(0)
         self.pitchMotor.set_duty_cycle(0)
         
     def fire(self, n):
-        """! The turret fires a specified number of rounds at the target
+        """!
+        @breif The turret fires a specified number of rounds at the target
         @param n: number of rounds to be fired
         """
         self.servo.magDump(n)
@@ -174,7 +183,8 @@ class Turret:
         print("Target Engaged")
         
     def sleep(self):
-        """! The turret resets to its home position and lowers flywheel duty cycle to a safer speed
+        """!
+        @brief The turret resets to its home position and lowers flywheel duty cycle to a safer speed
         """
         self.yawEncoder.zero()
         self.pitchEncoder.zero()

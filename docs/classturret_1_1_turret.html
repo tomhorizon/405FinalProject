@@ -24,7 +24,6 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
-  <td id="projectlogo"><img alt="Logo" src="WarCrimesLogoSmall.png"/></td>
   <td id="projectalign">
    <div id="projectname">ME 405 Final Project<span id="projectnumber">&#160;0.1.0</span>
    </div>
@@ -120,7 +119,7 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:af6c247b12f1c4e41f07202f801ec909c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The turret uses the yaw and pitch errors and their respective motors to aim at the selected target.  <br /></td></tr>
 <tr class="separator:af6c247b12f1c4e41f07202f801ec909c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e963ea64f62cbc23b35a12045e63f6c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classturret_1_1_turret.html#a4e963ea64f62cbc23b35a12045e63f6c">fire</a> (self, n)</td></tr>
-<tr class="memdesc:a4e963ea64f62cbc23b35a12045e63f6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The turret fires a specified number of rounds at the target.  <br /></td></tr>
+<tr class="memdesc:a4e963ea64f62cbc23b35a12045e63f6c"><td class="mdescLeft">&#160;</td><td class="mdescRight">@breif The turret fires a specified number of rounds at the target  <br /></td></tr>
 <tr class="separator:a4e963ea64f62cbc23b35a12045e63f6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97122539b8836c1ec6e5e7e4573e29a7"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classturret_1_1_turret.html#a97122539b8836c1ec6e5e7e4573e29a7">sleep</a> (self)</td></tr>
 <tr class="memdesc:a97122539b8836c1ec6e5e7e4573e29a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The turret resets to its home position and lowers flywheel duty cycle to a safer speed.  <br /></td></tr>
@@ -185,6 +184,7 @@ Public Attributes</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Turret class creates and carries out all of the functios of a heat-seekign nerf turret. </p>
+<p>The Turret class is designed to control the heat-seaking nerf turret shown in the README file, and is not universally applicable to any similar turret design. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a4df77f7655948a0bd54dfbc40d0af123" name="a4df77f7655948a0bd54dfbc40d0af123"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4df77f7655948a0bd54dfbc40d0af123">&#9670;&#160;</a></span>__init__()</h2>
@@ -303,6 +303,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>The turret uses the yaw and pitch errors and their respective motors to aim at the selected target. </p>
+<p>yawError and pitchError are integers that provide the error in pixels. The unit conversion is as follows: 32 pixels wide / 55 deg FOV ==&gt; 1 Pixel = 1.7188 degrees Encoder Resolution = 64 [counts/rev_shaft] * 50 [rev_shaft/rev_actual] * 4 [rev_pulley/rev_actual] * (1/360)[rev_pulley/deg] = 35.56 [counts/deg] (w/ 4:1 gear ratio) error [counts] = error [pixel] * 1.7188 [deg/pix] * 35.56 [count/deg] error [counts] = 61 * error [pixels] </p>
 
 </div>
 </div>
@@ -368,7 +369,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>The turret fires a specified number of rounds at the target. </p>
+<p>@breif The turret fires a specified number of rounds at the target </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">n</td><td>number of rounds to be fired </td></tr>
@@ -439,7 +440,7 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>C:/Users/phlip/OneDrive - Cal Poly/ME 405 Mechatronics/405FinalProject/src/turret.py</li>
+<li>C:/Users/dylan/OneDrive/Documents/GitHub/405FinalProject/src/turret.py</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
