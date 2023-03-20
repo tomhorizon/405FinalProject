@@ -8,18 +8,21 @@ The competition goal was to create a machine that uses a thermal camera to direc
 
 This exercise is an early study on the possibility of targetting embers falling through the sky and precisely extinguishing them before they have a chance to cause further wildfire damage. In theory, a network of these machines that use thermal data for targetting can prevent the spread of fires.
 
-
 **Mechanical Hardware**
 
 The machine is actuated by two 200rpm 24v encoded motors to control rotation and pitch. With an internal gearing of 50:1 and an external gearing of 4:1, the machine is able to rotate about either axis at 1 revolution per second. Two 24v 12,000rpm motors with 5" diameter flywheels enthusiastically send darts down a lightweight 12" aluminum barrel. A maximum of 12 Nerf Accustrike darts are fed from a factory magazine, which are pushed between the flywheels by a 25kg 180deg hobby servo linked by pin and slot mechanism to a custom machined 3/8" firing rod. A custom 3D printed receiver supports the magazine, firing rod, and rear of the barrel.
 
 The support structure is a combination of laser cut 12g steel and 3D printed pivot mechanisms. All pivots are supported by 1/4" steel D shaft on bearings pressed into place. Heatset inserts were used extensively in the 3D printed parts in M3 and M4 sizes to fassten parts.
 
-The base of the machine is an 8" lazy Susan ball bearing unit. It is bolted to a bespoke wooden base with adequate clearance for the yaw gearing. This is further supported by a brake disc to prevent slipping and under-rotation of the turret. 
+The base of the machine is an 8" lazy Susan ball bearing unit. It is bolted to a bespoke wooden base with adequate clearance for the yaw gearing. This is further supported by a brake disc to prevent slipping and under-rotation of the turret. To add to the overall aesthetic of the design, a 3.3-24V alarm and three 5V pre-resisted red LEDs alert to the opponent of their approaching fate.
 
-To add to the overall aesthetic of the design, a 3.3-24V alarm and three 5V pre-resisted red LEDs alert to the opponent of their approaching fate. 
 
-![Figure 1: Final system render.](/imgFullTurret.png)
+doxygen is great!
+
+
+
+
+![Figure 1: Final system render.](/imgFullTurret2.png)
 
 ![Figure 2: Motors and gear system.](/imgMotorsAndGearing.png)
 
