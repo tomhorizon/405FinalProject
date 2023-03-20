@@ -39,6 +39,12 @@ An overview of the software design. This should be brief and general, with a lin
 
 **dylan and jonathan**
 
+Our software utilizes i2c communication to capture images from an infrared camera. 
+The captured images are then processed using a targeting algorithm to detect human
+targets. Once a target has been detected, a PID control algorithm is employed to 
+control the encoder motors, which are used to fire a Nerf dart accurately towards
+our target.
+
 ![Figure 7: Nucleo pinout.](/imgPinout.png)
 
 
@@ -47,6 +53,19 @@ An overview of the software design. This should be brief and general, with a lin
 A discussion of the results.  How did you test your system?  How well has your system performed in these tests?
 
 **dylan and jonathan**
+
+During the testing phase of the system, we ensured that the firing pin had a 
+consistent and reliable range of motion, which was achieved by using a servo 
+and linkage mechanism. We also tested the flywheels to ensure that they 
+propelled the dart straight towards the target and did not draw too much 
+current, which could affect the system's overall performance.
+
+The pitch and yaw movement were tested to verify that the system was capable 
+of accurately aiming the Nerf dart towards the target. The accuracy of the 
+targeting algorithm was also tested to ensure that it correctly identified and 
+tracked human targets, further enhancing the precision of the system. We
+ended up fine tuning our algortihm with small offsets to pitch and yaw to ensure
+it more frequently hit our human targets.
 
 ![Figure 8: Final production unit.](/imgRealFullTurret.jpg)
 
@@ -60,6 +79,18 @@ A brief discussion of what you've learned about the project and recommendations 
 
 **dylan and jonathan**
 
+Overall, building our own system rather than relying on pre-existing Nerf hardware
+was a success, as it allowed us to create a more intricate and finished design. 
+We also had ample time to put into the project, which allowed us to thoroughly test
+each subsystem and the system as a whole, which was critical in identifying issues 
+and debugging them.
+
+However, certain algorithms, such as the weighted average for targeting, did not 
+work as well as we had hoped. Along with this, pure propotional control with a single
+fixed setpoint caused constant overshooting, which affected the accuracy of the 
+system. Additionally, the vibrations from the flywheels caused issues with the 
+overall stability of the system and led to certain other systems failing or becoming
+unreliable.
 
 # Links
 Compilation of duels conducted during on championship day (3/17/2023):
