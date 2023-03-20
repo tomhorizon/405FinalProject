@@ -54,11 +54,11 @@ A discussion of the results.  How did you test your system?  How well has your s
 
 **dylan and jonathan**
 
-![Figure 8: Final production unit.](/imgRealFullTurret.jpeg)
+![Figure 8: Final production unit.](/imgRealFullTurret.jpg)
 
-![Figure 9: Front view.](/imgRealTurretFront.jpeg)
+![Figure 9: Front view.](/imgRealTurretFront.jpg)
 
-![Figure 10: Topdown view.](/imgRealTopDown.jpeg)
+![Figure 10: Topdown view.](/imgRealTopDown.jpg)
 
 **Takeaways**
 
