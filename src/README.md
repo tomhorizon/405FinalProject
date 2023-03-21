@@ -62,7 +62,7 @@ We were getting unreliable data from a weighted average system. Although we had 
 
 ![Figure 8: Example thermal image.](/imgThermalImage.png)
 
-Detailed software information can be found in our [repository.](https://github.com/tomhorizon/405FinalProject).
+Detailed software information can be found in our [repository](https://github.com/tomhorizon/405FinalProject).
 
 # Results
 
