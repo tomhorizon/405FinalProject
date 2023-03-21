@@ -66,8 +66,6 @@ Detailed software information can be found in our [repository.](https://github.c
 
 # Results
 
-A discussion of the results.  How did you test your system?  How well has your system performed in these tests?
-
 ## Testing
 
 Testing took a significant amount of time as we fine-tuned the machine. Some of the issues we ran in to were:
