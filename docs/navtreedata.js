@@ -25,16 +25,19 @@
 var NAVTREE =
 [
   [ "ME 405 Final Project", "index.html", [
-    [ "Overview - Learn by Dueling", "md__c___users_dylan__one_drive__documents__git_hub_405_final_project_src__r_e_a_d_m_e.html", [
-      [ "Hardware", "md__c___users_dylan__one_drive__documents__git_hub_405_final_project_src__r_e_a_d_m_e.html#autotoc_md1", [
-        [ "Mechanical", "md__c___users_dylan__one_drive__documents__git_hub_405_final_project_src__r_e_a_d_m_e.html#autotoc_md2", null ],
-        [ "Electronics", "md__c___users_dylan__one_drive__documents__git_hub_405_final_project_src__r_e_a_d_m_e.html#autotoc_md3", null ]
+    [ "Overview - Learn by Dueling", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html", [
+      [ "Hardware", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md1", [
+        [ "Mechanical", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md2", null ],
+        [ "Electronics", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md3", null ]
       ] ],
-      [ "Software", "md__c___users_dylan__one_drive__documents__git_hub_405_final_project_src__r_e_a_d_m_e.html#autotoc_md4", null ],
-      [ "Results", "md__c___users_dylan__one_drive__documents__git_hub_405_final_project_src__r_e_a_d_m_e.html#autotoc_md5", [
-        [ "Takeaways", "md__c___users_dylan__one_drive__documents__git_hub_405_final_project_src__r_e_a_d_m_e.html#autotoc_md6", null ]
+      [ "Software", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md4", null ],
+      [ "Results", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md5", [
+        [ "Testing", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md6", null ],
+        [ "Performance", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md7", null ],
+        [ "Final Product Pictures", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md8", null ],
+        [ "Takeaways", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md9", null ]
       ] ],
-      [ "Links", "md__c___users_dylan__one_drive__documents__git_hub_405_final_project_src__r_e_a_d_m_e.html#autotoc_md7", null ]
+      [ "Links", "md__c___users_phlip__one_drive____cal__poly__m_e_405__mechatronics_405_final_project_src__r_e_a_d_m_e.html#autotoc_md10", null ]
     ] ],
     [ "Classes", "annotated.html", [
       [ "Class List", "annotated.html", "annotated_dup" ],
