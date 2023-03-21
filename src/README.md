@@ -1,5 +1,19 @@
 # Overview - Learn by Dueling
 
+Thomas Taylor
+
+Dylan Weiglein
+
+Jonathan Fraser
+
+Cal Poly, San Luis Obispo
+
+Winter Quarter 2023
+
+ME-405 Term Project
+
+Thank you to Professor John R. Ridgely for the project. It was a great experience.
+
 ![Figure 0: Early concept art of the turret (Fusion 360).](imgInitialRender.png)
 
 This project was a showcase of all programming and hardware skills acquired over the last two quarters of our Mechatronics education. The goal of the project was to integrate motor control, sensors, communication protocols, and inspire creativity with an open-ended design.
@@ -71,7 +85,7 @@ Detailed software information can be found in our [repository](https://github.co
 Testing took a significant amount of time as we fine-tuned the machine. Some of the issues we ran in to were:
 
 - The firing pin. We made small adjustments to ensure it had a consistent and reliable range of motion, which was achieved by using a servo and linkage mechanism. 
-- The flywheels had issues with drawing too much current on startup. We had to ensure that they propelled the dart straight towards the target and did not draw too much current, which could affect the system's overall performance. We had one issue with the early press-fit flywheels (before flange mounting) where the system abruptly came to full power and a flywheel came off. One monitor and one keyboard was damaged beyond repair.
+- The flywheels had issues with drawing too much current on startup. We had to ensure that they propelled the dart straight towards the target and did not draw too much current, which could affect the system's overall performance. We had one issue with the early press-fit flywheels (before flange mounting) where the system abruptly came to full power and a flywheel came off. One monitor and one keyboard were damaged beyond repair.
 - The pitch and yaw movement were tested to verify that the system was capable of accurately aiming the Nerf dart towards the target. We found issues in the gearing system where, over time, the gears could creep out of place. Reinforcements were made to the yaw large gear and an idler was added to the pitch belt.
 - The accuracy of the targeting algorithm was also tested to ensure that it correctly identified and tracked human targets, further enhancing the precision of the system. We ended up fine-tuning our algorithm with small offsets to pitch and yaw to ensure it more frequently hit our human targets.
 
