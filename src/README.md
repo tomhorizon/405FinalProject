@@ -145,7 +145,7 @@ For anyone interested in continuing our research, we recommend using a higher re
 
 [D Shaft](https://www.mcmaster.com/8632T132/)
 
-[Barrel](https://www.mcmaster.com/89895K762-89895K264/)
+[Barrel](https://www.mcmaster.com/catalog/129/4168/7785T14)
 
 [Flywheel Flanges](https://www.amazon.com/dp/B07PFW6GKL?psc=1&ref=ppx_yo2ov_dt_b_product_details)
 
