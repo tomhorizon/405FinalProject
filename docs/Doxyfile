@@ -1081,7 +1081,12 @@ IMAGE_PATH             = "../../../../Desktop/Final Lab Pics/imgControlBox.png" 
                          "../../../../Desktop/Final Lab Pics/imgRearFiringGroup.png" \
                          "../../../../Desktop/Final Lab Pics/imgFullTurret.png" \
                          "../../../../Desktop/Final Lab Pics/imgFullTurret2.png" \
-                         "../../../../Desktop/Final Lab Pics/imgWiringDiagram.png"
+                         "../../../../Desktop/Final Lab Pics/imgWiringDiagram.png" \
+                         ../Pictures/imgThermalImage.png \
+                         "../../../../Desktop/Final Lab Pics/imgControlBox.png" \
+                         ../Pictures/imgRealControlBox.png \
+                         "../../../../Desktop/Final Lab Pics/imgControlBox.png" \
+                         ../Pictures/scoreboard.png
 
 # The INPUT_FILTER tag can be used to specify a program that doxygen should
 # invoke to filter for each input file. Doxygen will invoke the filter program
