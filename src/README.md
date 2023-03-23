@@ -68,11 +68,11 @@ In competition, the idling system waits for the "Go" signal from the user switch
 - Fires a single shot
 - Returns "home"
 
-The targeting algorithm was refined over many test sessions. Once data is captured, the algorith:
+The targeting algorithm was refined over many test sessions. Once data is captured, the algorithm:
 - Checks a specified range of columns and sums the heat values above a threshold level
 - Looks for the largest value in the largest summed row
 
-We were getting unreliable data from a weighted average system. Although we had mostly successful hit, occasionally the turret would aim a bit too high (face level) which was tougher to hit than chest level.
+We were getting unreliable data from a weighted average system. Although we had mostly successful hits, occasionally the turret would aim a bit too high (face level) which was tougher to hit than chest level.
 
 ![Figure 8: Example thermal image.](/imgThermalImage.png)
 
